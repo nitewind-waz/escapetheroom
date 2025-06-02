@@ -6,7 +6,10 @@ ruangan CreateRoom(char id) {
     if (room != NULL) {
         room->id = id;
         room->hasKey = false;
-        for (int i = 0; i < MAX_DOORS; i++) room->doors[i] = NULL;
+        room->isExit = false;
+        for (int i = 0; i < MAX_DOORS; i++) {
+            room->doors[i] = NULL;
+        }
     }
     return room;
 }

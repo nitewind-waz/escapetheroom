@@ -10,8 +10,8 @@ int main(void)
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Escape the Room - Raylib Template");
     SetTargetFPS(60);
 
-    ruangan *rooms[MAX_ROOMS];
-    BuildRandomTree(rooms);
+    ruangan rooms[MAX_ROOMS];
+    BuildRandomRoom(rooms);
 
     // Game loop utama
     while (!WindowShouldClose())    // Tutup jika tombol ESC atau ikon X ditekan
