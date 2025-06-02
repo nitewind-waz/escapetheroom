@@ -1,1 +1,1 @@
-gcc -o main.exe main.c "./utils/menu.c" "./src/tree.c" -lraylib -lopengl32 -lgdi32 -lwinmm
+gcc -o main.exe main.c "./src/utils.c" -lraylib -lopengl32 -lgdi32 -lwinmm
