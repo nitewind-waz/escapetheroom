@@ -1,44 +1,34 @@
 
-#include "./raylib/include/raylib.h"
-#include "./include/menu.h"
-#include "./include/tree.h"
+#include "room.h"
 
-#include <stdio.h>
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
 
 int main(void)
 {
     // Inisialisasi window
-    address root = NULL;
-    CreateDir(&root, "Root");
-    const int screenWidth = 800;
-    const int screenHeight = 500;
-    InitWindow(screenWidth, screenHeight, "Raylib Test Window");
-    Font myFont = LoadFontEx("./assets/font/poppins.ttf", 100, 0, 0);
-    GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
-    GuiSetFont(myFont);
-    SetTargetFPS(60); // Set frame per second
-    // Loop utama aplikasi
-    Rectangle bounds = {20,40, 200, 40};
-    char buff[50];
-    while (!WindowShouldClose()) // Loop sampai user tekan ESC atau close
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Escape the Room - Raylib Template");
+    SetTargetFPS(60);
+
+    ruangan *rooms[MAX_ROOMS];
+    BuildRandomTree(rooms);
+
+    // Game loop utama
+    while (!WindowShouldClose())    // Tutup jika tombol ESC atau ikon X ditekan
     {
-        Vector2 mousePos = GetMousePosition();
         BeginDrawing();
+        // Update logic (input, animasi, dll)
+        if (IsKeyPressed(KEY_SPACE)) {
+            // Contoh aksi sederhana
+        }
+        ClearBackground(DARKGRAY);
+        DrawText("Escape the Room", 20, 20, 30, RAYWHITE);
+        DrawText("Tekan [ESC] untuk keluar", 20, 60, 20, LIGHTGRAY);
 
-        char buffer[64];
-        sprintf(buffer, "Mouse Position: (%.0f, %.0f)", mousePos.x, mousePos.y);
-        DrawText(buffer, 10, 10, 20, DARKGRAY);
-        createDirButton (&root);
-        PrintTree(&root);
-
-        DrawCircleV(mousePos, 5, RED);
-        ClearBackground(RAYWHITE);
+        
         EndDrawing();
     }
 
-    // Tutup window dan bersihkan resource
-    UnloadFont(myFont);
     CloseWindow();
-
     return 0;
 }
