@@ -1,5 +1,5 @@
 // Room.c
-#include "Room.h"
+#include "../include/room.h"
 
 ruangan CreateRoom(char id) {
     ruangan room = (ruangan)malloc(sizeof(Room));

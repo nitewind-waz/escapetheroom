@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "keys.h": "c",
+        "room.h": "c",
+        "utils.h": "c"
+    }
+}

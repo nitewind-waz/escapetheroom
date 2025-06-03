@@ -1,7 +1,6 @@
 #ifndef ROOM_H
 #define ROOM_H
 
-#include "raylib/include/raylib.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>

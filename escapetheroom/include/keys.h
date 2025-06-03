@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "../raylib/include/raylib.h"
 
 #define MAX_BAG_SIZE 3
 #define NULL Nil
