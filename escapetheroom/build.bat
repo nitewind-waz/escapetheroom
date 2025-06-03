@@ -1,1 +1,1 @@
-gcc -o main.exe main.c "./src/room.c" "./src/utils.c" 
+gcc -o main main.c src/room.c
