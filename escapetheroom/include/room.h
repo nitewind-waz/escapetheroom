@@ -1,10 +1,11 @@
 #ifndef ROOM_H
 #define ROOM_H
 
-#include "raylib/include/raylib.h"
+#include "../raylib/include/raylib.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "time.h"
 
 #define MAX_DOORS 3
 #define MAX_ROOMS 26
@@ -24,5 +25,6 @@ ruangan CreateRoom(char id);
 bool HasEmptyDoor(ruangan room);
 int FindEmptyDoor(ruangan room);
 void BuildRandomRoom(ruangan rooms[]);
+void printRoom();
 
 #endif

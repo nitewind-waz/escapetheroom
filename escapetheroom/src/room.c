@@ -1,5 +1,5 @@
 // Room.c
-#include "Room.h"
+#include "../include/room.h"
 
 ruangan CreateRoom(char id) {
     ruangan room = (ruangan)malloc(sizeof(Room));
@@ -50,15 +50,31 @@ void BuildRandomRoom(ruangan rooms[]) {
         // search parent nu    punya pintu kosong
         int parentIndex;
         do {
-            parentIndex = GetRandomValue(0, availableCount - 1);
+            parentIndex = rand() % availableCount;
         } while (!HasEmptyDoor(available[parentIndex]));
 
         ruangan parent = available[parentIndex];
         int doorIndex = FindEmptyDoor(parent);
         parent->doors[doorIndex] = newRoom;
-
+        
         if (HasEmptyDoor(newRoom)) {
             available[availableCount++] = newRoom;
         }
     }
+}
+
+void printRoom(){
+    system("cls");
+    
+    printf("            ^ ^            \n");
+    printf("            | |            \n");
+    printf("    ======== W ========    \n");
+    printf("    ||               ||    \n");
+    printf("    ||               ||    \n");
+    printf("<<== A               D ==>>\n");
+    printf("    ||               ||    \n");
+    printf("    ||               ||    \n");
+    printf("    ======== S ========    \n");
+    printf("            | |            \n");
+    printf("            v v              ");
 }
