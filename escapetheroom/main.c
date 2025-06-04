@@ -5,12 +5,13 @@
 
 
 int main(){
-    srand(time(NULL));
-    
-    ruangan rooms[MAX_ROOMS];
-    
+    // srand(time(NULL));
+    ruangan root = NULL;
 
-    BuildRandomRoom(rooms);
+    BuildRandomRoom(&root);
+
     printRoom();
+    MasukPintu(root);
+    
     return 0;
 }
