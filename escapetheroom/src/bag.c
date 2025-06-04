@@ -16,30 +16,51 @@ void pushInventory(bagStack *stack, Item item) {
     stack->top = newBag;
 }
 
-int popBag(bagStack *stack) {
-    Item current;
+Item popBag(bagStack *stack) {
     if (stack->top == NULL) {
         fprintf(stderr, "Stack is empty, cannot pop\n");
-        return;
+        return -1; // Return -1 as error indicator (outside enum range)
     }
     Bag *temp = stack->top;
-    current = temp->items;
+    Item current = temp->items;
     stack->top = stack->top->next;
     free(temp);
 
     return current;
 }
 
-int getItem(bagStack *stack) {
+Item getItem(bagStack *stack) {
     Item current = popBag(stack);
-    if (current == NULL) {
+    if (current == -1) {
         fprintf(stderr, "No items in the bag\n");
-        return -1; // Indicating no item was found
+        return -1; // Return -1 for error
     }
     return current;
 }
 
 void setItem(bagStack *stack, ruangan room) {
-    Item item = getKey(room);
-    pushInventory(stack, item);
+    int keyType = getKey(room);
+    if (keyType == 1) {
+        pushInventory(stack, roomKey);
+    } else if (keyType == 2) {
+        pushInventory(stack, exitKey);
+    }
+    // keyType == 0 or -1 means no key, so we don't push anything
+}
+
+void printBag(bagStack *stack) {
+    Bag *current = stack->top;
+    if (current == NULL) {
+        printf("Bag is empty.\n");
+        return;
+    }
+    printf("Items in the bag:\n");
+    while (current != NULL) {
+        if (current->items == exitKey) {
+            printf("- Exit Key\n");
+        } else if (current->items == roomKey) {
+            printf("- Room Key\n");
+        }
+        current = current->next;
+    }
 }

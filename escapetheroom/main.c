@@ -2,16 +2,23 @@
 // Library luar
 #include "./include/utils.h"
 #include "include/room.h"
+#include "include/bag.h"
 
 
 int main(){
     // srand(time(NULL));
-    ruangan root = NULL;
+    // ruangan root = NULL;
+    bagStack inventory;
+    initBagStack(&inventory);
 
-    BuildRandomRoom(&root);
+    pushInventory(&inventory, roomKey);
+    pushInventory(&inventory, exitKey);
+    printBag(&inventory);
 
-    printRoom();
-    MasukPintu(root);
+    // BuildRandomRoom(&root);
+
+    // printRoom();
+    // MasukPintu(root);
     
     return 0;
 }

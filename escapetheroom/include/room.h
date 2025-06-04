@@ -30,5 +30,7 @@ void BuildRandomRoom(ruangan *root);
 void printRoom();
 void MasukPintu(ruangan rooms);
 
+int getKey(ruangan room);
+
 
 #endif
