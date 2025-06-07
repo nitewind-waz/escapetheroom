@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include <time.h>
 #include "conio.h"
 
@@ -30,14 +31,17 @@ typedef struct {
 } StackRoom;
 
 
+
 // extern ruangan allRooms[MAX_ROOMS];
+ruangan FindExitRoom(ruangan current); 
 bool HasExitKey(ruangan room);
 bool HasDoorKey(ruangan room);
+bool HasExitRoom(ruangan room);
 ruangan CreateRoom(char id);
 bool HasEmptyDoor(ruangan room);
 int FindEmptyDoor(ruangan room);
 void BuildRandomRoom(ruangan *root);
-void printRoom();
+void printRoom(ruangan room);
 void MasukPintu(ruangan rooms);
 void FindAvailableRoom(ruangan current, ruangan* list, int* count);
 int getKey(ruangan room);

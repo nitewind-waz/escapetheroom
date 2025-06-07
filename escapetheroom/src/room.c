@@ -15,6 +15,10 @@ ruangan CreateRoom(char id) {
     return room;
 }
 
+bool HasExitRoom(ruangan room) {
+    return room != NULL && room->isExit;
+}
+
 bool HasDoorKey(ruangan room) {
     return room != NULL && room->hasDoorKey;
 }
@@ -135,7 +139,7 @@ void BuildRandomRoom(ruangan* root) {
 //     }
 // }
 
-void printRoom(){
+void printRoom(ruangan room){
     printf("    ===================    \n");
     printf("    ||               ||    \n");
     printf("    ||               ||    \n");
@@ -144,6 +148,9 @@ void printRoom(){
     printf("    ||       V       ||    \n");
     printf("    ======== S ========    \n");
     printf("                           \n");
+    if (HasExitRoom(room)) {
+        printf("    Ruangan %c memiliki pintu keluar!\n", room->id);
+    }
 }
 
 void MasukPintu(ruangan rooms){
@@ -162,39 +169,39 @@ void MasukPintu(ruangan rooms){
             {
                 if (Ruangan->doors[0] == NULL)
                 {
-                    printRoom();
+                    printRoom(Ruangan);
                     printf("tidak ada ruangan di pintu itu\n\n");
                 }
                 else{
                     PushHistory(&historyroom, Ruangan);
                     Ruangan = Ruangan->doors[0];
                     printf("\n%c\n",Ruangan->id);
-                    printRoom();
+                    printRoom(Ruangan);
                 }
             }
             else if (input == 'D' || input == 'd')
             {
                 if (Ruangan->doors[2] == NULL)
                 {
-                    printRoom();
+                    printRoom(Ruangan);
                     printf("tidak ada ruangan di pintu itu\n\n");
                 }
                 else{
                     PushHistory(&historyroom, Ruangan);
                     Ruangan = Ruangan->doors[2];
                     printf("\n%c\n",Ruangan->id);
-                    printRoom();
+                    printRoom(Ruangan);
                 }
             }
             else if (input == 'S' || input == 's')
             {
                 if (Ruangan->doors[1] == NULL)
                 {
-                    printRoom();
+                    printRoom(Ruangan);
                     printf("tidak ada ruangan di pintu itu\n\n");
                 }
                 else{
-                    printRoom();
+                    printRoom(Ruangan);
                     PushHistory(&historyroom, Ruangan);
                     Ruangan = Ruangan->doors[1];
                     printf("\n%c\n",Ruangan->id);
@@ -204,24 +211,24 @@ void MasukPintu(ruangan rooms){
             {
                  if (!IsEmpty(&historyroom)) {
                     Ruangan = Pop(&historyroom);
-                    printRoom();
+                    printRoom(Ruangan);
                     printf("\nKembali ke ruangan %c\n\n", Ruangan->id);
                 } else {
                     system("cls\n");
-                    printRoom();
+                    printRoom(Ruangan);
                     printf("\nSudah di ruangan awal, tidak bisa kembali.\n\n");
                 }
             }
             else if (input == 'H' || input == 'h')
             {
-                printRoom();
+                printRoom(Ruangan);
                 printf("\n--- Riwayat Ruangan ---\n");
                 PrintHistory(historyroom);
                 printf("\n");
             }
             else{
                 printf("\n");
-                printRoom();
+                printRoom(Ruangan);
                 printf("pintu tidak valid");
             }
         }
@@ -264,4 +271,28 @@ void PrintHistory(StackRoom s) {
         printf("-> %c\n", temp->Rooms->id);
         temp = temp->next;
     }
+}
+
+bool visited[MAX_ROOMS]; // definisi global
+
+ruangan FindExitRoom(ruangan current) {
+    if (current == NULL) return NULL;
+
+    if (HasExitRoom(current)) {
+        return current;
+    }
+
+    visited[current->id - 'A'] = true;
+
+    for (int i = 0; i < MAX_DOORS; i++) {
+        ruangan next = current->doors[i];
+        if (next != NULL && !visited[next->id - 'A']) {
+            ruangan found = FindExitRoom(next);
+            if (found != NULL) {
+                return found;
+            }
+        }
+    }
+
+    return NULL;
 }
