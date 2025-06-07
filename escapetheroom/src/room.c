@@ -136,7 +136,6 @@ void BuildRandomRoom(ruangan* root) {
 // }
 
 void printRoom(){
-    system("cls");
     printf("    ===================    \n");
     printf("    ||               ||    \n");
     printf("    ||               ||    \n");
@@ -145,14 +144,16 @@ void printRoom(){
     printf("    ||               ||    \n");
     printf("    ======== S ========    \n");
     printf("            | |            \n");
-    printf("            v v              ");
+    printf("            v v             \n\n");
 }
 
 void MasukPintu(ruangan rooms){
     ruangan Ruangan = rooms; 
     
+    StackRoom historyroom;
+    createEmpty(&historyroom);
+    
     char input;
-
     do
     {
         if (kbhit())
@@ -162,26 +163,32 @@ void MasukPintu(ruangan rooms){
             {
                 if (Ruangan->doors[0] == NULL)
                 {   
+                    system("cls\n");
                     printRoom();
-                    printf("tidak ada ruangan di pintu itu");
+                    printf("tidak ada ruangan di pintu itu\n\n");
                 }
                 else{
+                    system("cls");
+                    PushHistory(&historyroom, Ruangan);
                     printRoom();
                     Ruangan = Ruangan->doors[0];
-                    printf("\n%c",Ruangan->id);
+                    printf("\n%c\n",Ruangan->id);
                 }
             }
             else if (input == 'D' || input == 'd')
             {
                 if (Ruangan->doors[2] == NULL)
                 {   
+                    system("cls\n");
                     printRoom();
-                    printf("tidak ada ruangan di pintu itu");
+                    printf("tidak ada ruangan di pintu itu\n\n");
                 }
                 else{
+                    system("cls");
+                    printf("\n%c\n",Ruangan->id);
                     printRoom();
                     Ruangan = Ruangan->doors[2];
-                    printf("\n%c",Ruangan->id);
+                    PushHistory(&historyroom, Ruangan);
                 }
                 /* code */
             }
@@ -189,29 +196,30 @@ void MasukPintu(ruangan rooms){
             {
                 if (Ruangan->doors[1] == NULL)
                 {   
+                    system("cls\n");
                     printRoom();
-                    printf("tidak ada ruangan di pintu itu");
+                    printf("tidak ada ruangan di pintu itu\n\n");
                 }
                 else{
+                    system("cls");
+                    printf("\n%c\n",Ruangan->id);
                     printRoom();
                     Ruangan = Ruangan->doors[1];
-                    printf("\n%c",Ruangan->id);
+                    PushHistory(&historyroom, Ruangan);
                 }            
                 /* code */
             }
             else if (input == 'W' || input == 'w')
             {
-                if (Ruangan->doors[0] == NULL)
-                {   
+                 if (!IsEmpty(&historyroom)) {
+                    Ruangan = Pop(&historyroom);
                     printRoom();
-                    printf("tidak ada ruangan di pintu itu");
-                }
-                else{
+                    printf("\nKembali ke ruangan %c\n\n", Ruangan->id);
+                } else {
+                    system("cls\n");
                     printRoom();
-                    Ruangan = Ruangan->doors[0];
-                    printf("\n%c",Ruangan->id);
+                    printf("\nSudah di ruangan awal, tidak bisa kembali.");
                 }
-                /* code */
             }
             else if (input == 'p' || input == 'P')
             {
@@ -219,6 +227,7 @@ void MasukPintu(ruangan rooms){
             }
             
             else{
+                printf("\n");
                 printRoom();
                 printf("pintu tidak valid");
             }
@@ -226,3 +235,33 @@ void MasukPintu(ruangan rooms){
         }
     } while (1);
 }
+
+void createEmpty(StackRoom *s){
+    s->top = NULL;
+}
+
+void PushHistory(StackRoom* s, ruangan Room){
+    riwayat *newRiwayatRoom = (riwayat*)malloc(sizeof(riwayat));
+    if (newRiwayatRoom != NULL)
+    {
+        newRiwayatRoom->Rooms = Room;
+        newRiwayatRoom->next = s->top;
+        s->top = newRiwayatRoom;
+    }
+}
+
+bool IsEmpty (StackRoom* S)
+{
+	return (S->top == NULL);
+}
+
+ruangan Pop(StackRoom* s) {
+    if (IsEmpty(s)) return NULL;
+
+    riwayat* temp = s->top;
+    ruangan room = temp->Rooms;
+    s->top = temp->next;
+    free(temp);
+    return room;
+}
+

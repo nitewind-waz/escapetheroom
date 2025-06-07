@@ -20,6 +20,16 @@ typedef struct Room {
     bool isExit;
 } Room;
 
+typedef struct riwayat {
+    ruangan Rooms;
+    struct riwayat *next;
+} riwayat;
+
+typedef struct {
+    riwayat *top;
+} StackRoom;
+
+
 // extern ruangan allRooms[MAX_ROOMS];
 bool HasExitKey(ruangan room);
 bool HasDoorKey(ruangan room);
@@ -31,6 +41,9 @@ void printRoom();
 void MasukPintu(ruangan rooms);
 void FindAvailableRoom(ruangan current, ruangan* list, int* count);
 int getKey(ruangan room);
-
+void createEmpty(StackRoom* s);
+void PushHistory(StackRoom* s, ruangan Room);
+ruangan Pop(StackRoom* s);
+bool IsEmpty (StackRoom* S);
 
 #endif
