@@ -139,12 +139,11 @@ void printRoom(){
     printf("    ===================    \n");
     printf("    ||               ||    \n");
     printf("    ||               ||    \n");
-    printf("      <<==   A   ==>>      \n");
+    printf("      <<==       ==>>      \n");
     printf("    ||       |       ||    \n");
     printf("    ||       V       ||    \n");
     printf("    ======== S ========    \n");
     printf("                           \n");
-    printf("                             ");
 }
 
 void MasukPintu(ruangan rooms){
@@ -162,52 +161,44 @@ void MasukPintu(ruangan rooms){
             if (input == 'A' || input == 'a')
             {
                 if (Ruangan->doors[0] == NULL)
-                {   
-                    system("cls\n");
+                {
                     printRoom();
                     printf("tidak ada ruangan di pintu itu\n\n");
                 }
                 else{
-                    system("cls");
                     PushHistory(&historyroom, Ruangan);
-                    printRoom();
                     Ruangan = Ruangan->doors[0];
                     printf("\n%c\n",Ruangan->id);
+                    printRoom();
                 }
             }
             else if (input == 'D' || input == 'd')
             {
                 if (Ruangan->doors[2] == NULL)
-                {   
-                    system("cls\n");
+                {
                     printRoom();
                     printf("tidak ada ruangan di pintu itu\n\n");
                 }
                 else{
-                    system("cls");
+                    PushHistory(&historyroom, Ruangan);
+                    Ruangan = Ruangan->doors[2];
                     printf("\n%c\n",Ruangan->id);
                     printRoom();
-                    Ruangan = Ruangan->doors[2];
-                    PushHistory(&historyroom, Ruangan);
                 }
-                /* code */
             }
             else if (input == 'S' || input == 's')
             {
                 if (Ruangan->doors[1] == NULL)
-                {   
-                    system("cls\n");
+                {
                     printRoom();
                     printf("tidak ada ruangan di pintu itu\n\n");
                 }
                 else{
-                    system("cls");
-                    printf("\n%c\n",Ruangan->id);
                     printRoom();
-                    Ruangan = Ruangan->doors[1];
                     PushHistory(&historyroom, Ruangan);
+                    Ruangan = Ruangan->doors[1];
+                    printf("\n%c\n",Ruangan->id);
                 }            
-                /* code */
             }
             else if (input == 'W' || input == 'w')
             {
@@ -218,20 +209,21 @@ void MasukPintu(ruangan rooms){
                 } else {
                     system("cls\n");
                     printRoom();
-                    printf("\nSudah di ruangan awal, tidak bisa kembali.");
+                    printf("\nSudah di ruangan awal, tidak bisa kembali.\n\n");
                 }
             }
-            else if (input == 'p' || input == 'P')
+            else if (input == 'H' || input == 'h')
             {
-                break;
+                printRoom();
+                printf("\n--- Riwayat Ruangan ---\n");
+                PrintHistory(historyroom);
+                printf("\n");
             }
-            
             else{
                 printf("\n");
                 printRoom();
                 printf("pintu tidak valid");
             }
-            /* code */
         }
     } while (1);
 }
@@ -265,3 +257,11 @@ ruangan Pop(StackRoom* s) {
     return room;
 }
 
+void PrintHistory(StackRoom s) {
+    riwayat* temp = s.top;
+
+    while (temp != NULL) {
+        printf("-> %c\n", temp->Rooms->id);
+        temp = temp->next;
+    }
+}

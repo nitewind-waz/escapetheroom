@@ -45,5 +45,6 @@ void createEmpty(StackRoom* s);
 void PushHistory(StackRoom* s, ruangan Room);
 ruangan Pop(StackRoom* s);
 bool IsEmpty (StackRoom* S);
+void PrintHistory(StackRoom s);
 
 #endif
