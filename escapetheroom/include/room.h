@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <time.h>
-#include "conio.h"
+#include <conio.h>
 
 #define MAX_DOORS 3
 #define MAX_ROOMS 26
@@ -41,7 +41,7 @@ ruangan CreateRoom(char id);
 bool HasEmptyDoor(ruangan room);
 int FindEmptyDoor(ruangan room);
 void BuildRandomRoom(ruangan *root);
-void printRoom(ruangan room);
+void printRoom(ruangan roomm);
 void MasukPintu(ruangan rooms);
 void FindAvailableRoom(ruangan current, ruangan* list, int* count);
 int getKey(ruangan room);
