@@ -26,6 +26,6 @@ typedef struct bagStack
 void initBagStack(bagStack *stack);
 void pushInventory(bagStack *stack, Item item);
 Item popBag(bagStack *stack);
-Item getItem(bagStack *stack);
+Item getItem(bagStack *stack); 
 void setItem(bagStack *stack, ruangan room);
 void printBag(bagStack *stack);

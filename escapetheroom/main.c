@@ -1,8 +1,8 @@
 
 // Library luar
-#include "./include/utils.h"
 #include "include/room.h"
 #include "include/bag.h"
+#include "include/utils.h"
 
 
 int main(){
