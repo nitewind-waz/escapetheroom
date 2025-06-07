@@ -6,8 +6,8 @@
 
 
 int main(){
-    // srand(time(NULL));
-    // ruangan root = NULL;
+    srand(time(NULL));
+    ruangan root = NULL;
     bagStack inventory;
     initBagStack(&inventory);
 
@@ -15,10 +15,10 @@ int main(){
     pushInventory(&inventory, exitKey);
     printBag(&inventory);
 
-    // BuildRandomRoom(&root);
+    BuildRandomRoom(&root);
 
-    // printRoom();
-    // MasukPintu(root);
+    printRoom();
+    MasukPintu(root);
     
     return 0;
 }
