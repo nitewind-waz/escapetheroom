@@ -125,12 +125,12 @@ void printRoom(){
     printf("    ===================    \n");
     printf("    ||               ||    \n");
     printf("    ||               ||    \n");
-    printf("<<== A       A       D ==>>\n");
-    printf("    ||               ||    \n");
-    printf("    ||               ||    \n");
+    printf("      <<==   A   ==>>      \n");
+    printf("    ||       |       ||    \n");
+    printf("    ||       V       ||    \n");
     printf("    ======== S ========    \n");
-    printf("            | |            \n");
-    printf("            v v              ");
+    printf("                           \n");
+    printf("                             ");
 }
 
 void MasukPintu(ruangan rooms){

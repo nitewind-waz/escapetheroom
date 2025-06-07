@@ -1,1 +1,1 @@
-gcc -o main main.c src/room.c src/bag.c
+gcc -o main main.c src/room.c src/bag.c src/utils.c
