@@ -135,14 +135,33 @@ void BuildRandomRoom(ruangan* root) {
 //     }
 // }
 
-void printRoom(){
+void printRoom(ruangan roomm){    
     printf("    ===================    \n");
+
+    printf("    ||       %C       ||    \n",roomm->id);
     printf("    ||               ||    \n");
-    printf("    ||               ||    \n");
-    printf("      <<==       ==>>      \n");
+
+    if (roomm->doors[0] != NULL){
+    printf("      <<== ");
+    }else{
+    printf("    ||     ");
+    } 
+    if (roomm->doors[2] != NULL)
+    {
+    printf("       ==>>\n");
+    }else{
+    printf("          ||\n");
+    }
+    if (roomm->doors[1] != NULL)
+    {
     printf("    ||       |       ||    \n");
     printf("    ||       V       ||    \n");
-    printf("    ======== S ========    \n");
+    printf("    ========   ========    \n");
+    }else{
+    printf("    ||               ||    \n");
+    printf("    ||               ||    \n");
+    printf("    ===================    \n");
+    }
     printf("                           \n");
 }
 
@@ -160,68 +179,71 @@ void MasukPintu(ruangan rooms){
             input = getch();
             if (input == 'A' || input == 'a')
             {
+                system("cls");
                 if (Ruangan->doors[0] == NULL)
                 {
-                    printRoom();
+                    printRoom(Ruangan);
                     printf("tidak ada ruangan di pintu itu\n\n");
                 }
                 else{
                     PushHistory(&historyroom, Ruangan);
                     Ruangan = Ruangan->doors[0];
-                    printf("\n%c\n",Ruangan->id);
-                    printRoom();
+                    printf("\nsekarang di ruangan : %c\n",Ruangan->id);
+                    printRoom(Ruangan);
                 }
             }
             else if (input == 'D' || input == 'd')
             {
+                system("cls");
                 if (Ruangan->doors[2] == NULL)
                 {
-                    printRoom();
+                    printRoom(Ruangan);
                     printf("tidak ada ruangan di pintu itu\n\n");
                 }
                 else{
                     PushHistory(&historyroom, Ruangan);
                     Ruangan = Ruangan->doors[2];
-                    printf("\n%c\n",Ruangan->id);
-                    printRoom();
+                    printf("\nsekarang di ruangan : %c\n",Ruangan->id);
+                    printRoom(Ruangan);
                 }
             }
             else if (input == 'S' || input == 's')
             {
+                system("cls");
                 if (Ruangan->doors[1] == NULL)
                 {
-                    printRoom();
+                    printRoom(Ruangan);
                     printf("tidak ada ruangan di pintu itu\n\n");
                 }
                 else{
-                    printRoom();
+                    printRoom(Ruangan);
                     PushHistory(&historyroom, Ruangan);
                     Ruangan = Ruangan->doors[1];
-                    printf("\n%c\n",Ruangan->id);
+                    printf("\nsekarang di ruangan : %c\n",Ruangan->id);
                 }            
             }
             else if (input == 'W' || input == 'w')
             {
+                system("cls");
                  if (!IsEmpty(&historyroom)) {
                     Ruangan = Pop(&historyroom);
-                    printRoom();
+                    printRoom(Ruangan);
                     printf("\nKembali ke ruangan %c\n\n", Ruangan->id);
                 } else {
-                    system("cls\n");
-                    printRoom();
+                    printRoom(Ruangan);
                     printf("\nSudah di ruangan awal, tidak bisa kembali.\n\n");
                 }
             }
             else if (input == 'H' || input == 'h')
             {
-                printRoom();
+                printRoom(Ruangan);
                 printf("\n--- Riwayat Ruangan ---\n");
                 PrintHistory(historyroom);
                 printf("\n");
             }
             else{
                 printf("\n");
-                printRoom();
+                printRoom(Ruangan);
                 printf("pintu tidak valid");
             }
         }
