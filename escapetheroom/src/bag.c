@@ -45,7 +45,6 @@ void setItem(bagStack *stack, ruangan room) {
     } else if (keyType == 2) {
         pushInventory(stack, exitKey);
     }
-    // keyType == 0 or -1 means no key, so we don't push anything
 }
 
 void printBag(bagStack *stack) {
