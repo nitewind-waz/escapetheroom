@@ -6,19 +6,17 @@
 
 
 int main(){
-    // srand(time(NULL));
+    srand(time(NULL));
     ruangan root = NULL;
     bagStack inventory;
     initBagStack(&inventory);
 
     
 
-    // BuildRandomRoom(&root);
-    // printRoom();
-    pushInventory(&inventory, exitKey);
-    pushInventory(&inventory, roomKey);
-    printBag(&inventory);
-    // MasukPintu(root); 
+    BuildRandomRoom(&root);
+
+    printRoom();
+    MasukPintu(root);
     
     return 0;
 }

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "time.h"
+#include <time.h>
 #include "conio.h"
 
 #define MAX_DOORS 3
@@ -29,7 +29,7 @@ int FindEmptyDoor(ruangan room);
 void BuildRandomRoom(ruangan *root);
 void printRoom();
 void MasukPintu(ruangan rooms);
-
+void FindAvailableRoom(ruangan current, ruangan* list, int* count);
 int getKey(ruangan room);
 
 

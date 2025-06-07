@@ -31,14 +31,24 @@ int getKey(ruangan room) {
 }
 
 bool HasEmptyDoor(ruangan room) {
-    return FindEmptyDoor(room) != -1;
+    for (int i = 0; i < MAX_DOORS; i++) {
+        if (room->doors[i] == NULL) return true;
+    }
+    return false;
 }
 
 int FindEmptyDoor(ruangan room) {
+     int indeks[MAX_DOORS];
+    int count = 0;
+
     for (int i = 0; i < MAX_DOORS; i++) {
-        if (room->doors[i] == NULL) return i;
+        if (room->doors[i] == NULL) {
+            indeks[count++] = i;
+        }
     }
-    return -1; // ini klo penuh dia
+
+    if (count == 0) return -1;
+    return indeks[rand() % count];
 }
 
 // int FindEmptyDoor(ruangan room) {
@@ -48,45 +58,50 @@ int FindEmptyDoor(ruangan room) {
 //     return false; // ini klo penuh dia
 // }
 
-bool FindAvailableRoom(ruangan current, ruangan *current1) {
-    if (current == NULL) return false;
+void FindAvailableRoom(ruangan current, ruangan* list, int* count) {
+    if (current == NULL) return;
     if (HasEmptyDoor(current)) {
-        *current1 = current;
-        return true;
+        list[(*count)++] = current;
     }
     for (int i = 0; i < MAX_DOORS; i++) {
         if (current->doors[i] != NULL) {
-            if (FindAvailableRoom(current->doors[i], current1)) {
-                return true;
-            }
+            FindAvailableRoom(current->doors[i], list, count);
         }
     }
-    return false;
 }
 
-void BuildRandomRoom(ruangan *root) {
+void BuildRandomRoom(ruangan* root) {
+    srand(time(NULL));
+
     *root = CreateRoom('A');
     int roomCount = 1;
 
     while (roomCount < MAX_ROOMS) {
-        ruangan newRoom = CreateRoom('A' + roomCount);
-        ruangan parent = NULL;
+        ruangan candidates[100];  // sementara, hanya untuk proses
+        int count = 0;
 
-        // cari dulu node nu pintu na ksong
-        while (!FindAvailableRoom(*root, &parent)) {
-            // klo penuh semua berhenti
-            return;
-        }
+        FindAvailableRoom(*root, candidates, &count);
+        if (count == 0) break;
 
+        ruangan parent = candidates[rand() % count];
         int doorIndex = FindEmptyDoor(parent);
+
+        if (doorIndex == -1) continue;
+
+        ruangan newRoom = CreateRoom('A' + roomCount);
         parent->doors[doorIndex] = newRoom;
         roomCount++;
     }
 
-    // Tandai ruangan terakhir jadi  exiitt
-    ruangan exitRoom = NULL;
-    FindAvailableRoom(*root, &exitRoom);
-    if (exitRoom) exitRoom->isExit = true;
+    // tandai ruangan exit secara acak dari ruangan yang punya pintu kosong
+    ruangan availableExitRooms[100];
+    int availableCount = 0;
+    FindAvailableRoom(*root, availableExitRooms, &availableCount);
+
+    if (availableCount > 0) {
+        ruangan exitRoom = availableExitRooms[rand() % availableCount];
+        exitRoom->isExit = true;
+    }
 }
 
 // void BuildRandomRoom(ruangan rooms[]) {
