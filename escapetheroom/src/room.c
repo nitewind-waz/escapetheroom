@@ -108,36 +108,6 @@ void BuildRandomRoom(ruangan* root) {
     }
 }
 
-// void BuildRandomRoom(ruangan rooms[]) {
-//     ruangan available[MAX_ROOMS];
-//     int availableCount = 0;
-
-//     // untuk membuat   semmua ruangan ieu
-//     for (int i = 0; i < MAX_ROOMS; i++) {
-//         rooms[i] = CreateRoom('A' + i);
-//     }
-
-//     // bikin A jadi root
-//     available[availableCount++] = rooms[0];
-
-//     for (int i = 1; i < MAX_ROOMS; i++) {
-//         ruangan newRoom = rooms[i];
-
-//         // search parent nu    punya pintu kosong
-//         int parentIndex;
-//         do {
-//             parentIndex = rand() % availableCount;
-//         } while (!HasEmptyDoor(available[parentIndex]));
-
-//         ruangan parent = available[parentIndex];
-//         int doorIndex = FindEmptyDoor(parent);
-//         parent->doors[doorIndex] = newRoom;
-        
-//         if (HasEmptyDoor(newRoom)) {
-//             available[availableCount++] = newRoom;
-//         }
-//     }
-// }
 
 void printRoom(ruangan roomm){    
     printf("    ===================    \n");
@@ -168,7 +138,7 @@ void printRoom(ruangan roomm){
     }
     printf("                           \n");
     if (HasExitRoom(roomm)) {
-        printf("    Ruangan %c memiliki pintu keluar!\n", room->id);
+        printf("    Ruangan %c memiliki pintu keluar!\n", roomm->id);
     }
 }
 
@@ -223,9 +193,9 @@ void MasukPintu(ruangan rooms){
                     printf("tidak ada ruangan di pintu itu\n\n");
                 }
                 else{
-                    printRoom(Ruangan);
                     PushHistory(&historyroom, Ruangan);
                     Ruangan = Ruangan->doors[1];
+                    printRoom(Ruangan);
                     printf("\nsekarang di ruangan : %c\n",Ruangan->id);
                 }            
             }
