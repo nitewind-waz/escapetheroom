@@ -47,4 +47,7 @@ ruangan Pop(StackRoom* s);
 bool IsEmpty (StackRoom* S);
 void PrintHistory(StackRoom s);
 
+bool cariRuangan(ruangan awal, bool sudahDikunjungi[], char idroom);
+void temukanExit(ruangan posisiSekarang, ruangan rootnya);
+
 #endif

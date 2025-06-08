@@ -23,8 +23,10 @@ int main(){
         printf("2. tekan \' S \' untuk ke pintu yang ada di bawah \n");
         printf("3. tekan \' D \' untuk ke pintu sebelah kanan \n");
         printf("4. tekan \' W \' untuk Pindah Ke ruangan sebelumnya yang di datengin \n");
-        printf("5. tekan \' H \' untuk melihat list Riwayat ruangan yang di jelajahi sebelumnya \n\n");
+        printf("5. tekan \' H \' untuk melihat list Riwayat ruangan yang di jelajahi sebelumnya \n");
+        printf("6. tekan \' M \' untuk mencari jalur ke EXIT \n\n");
         printf("Mulai Bermain ?[y/t] : ");
+
         if (getch() == 'y' || getch() == 'Y')
         {
             menu = false;

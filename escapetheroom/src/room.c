@@ -169,8 +169,8 @@ void printRoom(ruangan roomm){
     }
     else{
             printf("    ===================    \n");
-            printf("    ||       %C       ||    \n",roomm->id);
-            printf("    ||               ||    \n");
+            printf("    ||    ruangan    ||    \n");
+            printf("    ||       %c       ||    \n",roomm->id);
 
         // gambar pintu 1
         if (roomm->doors[0] != NULL){
@@ -178,7 +178,7 @@ void printRoom(ruangan roomm){
             {
                 printf("EXIT! <<== ");
             }else{
-                printf("      <<== ");
+                printf("     %c<<== ",roomm->doors[0]->id);
             }
         }else{
             printf("    ||     ");
@@ -192,7 +192,7 @@ void printRoom(ruangan roomm){
                 printf("       ==>> EXIT!\n");
             }
             else{
-                printf("       ==>>\n");
+                printf("      ==>>%c\n",roomm->doors[2]->id);
             }
         }else{
             printf("          ||\n");
@@ -210,7 +210,7 @@ void printRoom(ruangan roomm){
             else{
                 printf("    ||       |       ||    \n");
                 printf("    ||       V       ||    \n");
-                printf("    ========   ========    \n");
+                printf("    ======== %c ========    \n",roomm->doors[1]->id);
             }
         }else{
         printf("    ||               ||    \n");
@@ -222,7 +222,7 @@ void printRoom(ruangan roomm){
 }
 
 void MasukPintu(ruangan rooms){
-    ruangan Ruangan = rooms; 
+    ruangan Room_Saat_ini = rooms , RoomRoot = rooms; 
     
     StackRoom historyroom;
     createEmpty(&historyroom);
@@ -236,70 +236,73 @@ void MasukPintu(ruangan rooms){
             if (input == 'A' || input == 'a')
             {
                 system("cls");
-                if (Ruangan->doors[0] == NULL)
+                if (Room_Saat_ini->doors[0] == NULL)
                 {
-                    printRoom(Ruangan);
+                    printRoom(Room_Saat_ini);
                     printf("tidak ada ruangan di pintu itu\n\n");
                 }
                 else{
-                    PushHistory(&historyroom, Ruangan);
-                    Ruangan = Ruangan->doors[0];
-                    printRoom(Ruangan);
-                    printf("\nsekarang di ruangan : %c\n",Ruangan->id);
+                    PushHistory(&historyroom, Room_Saat_ini);
+                    Room_Saat_ini = Room_Saat_ini->doors[0];
+                    printRoom(Room_Saat_ini);
+                    printf("\nsekarang di ruangan : %c\n",Room_Saat_ini->id);
                 }
             }
             else if (input == 'D' || input == 'd')
             {
                 system("cls");
-                if (Ruangan->doors[2] == NULL)
+                if (Room_Saat_ini->doors[2] == NULL)
                 {
-                    printRoom(Ruangan);
+                    printRoom(Room_Saat_ini);
                     printf("tidak ada ruangan di pintu itu\n\n");
                 }
                 else{
-                    PushHistory(&historyroom, Ruangan);
-                    Ruangan = Ruangan->doors[2];
-                    printRoom(Ruangan);
-                    printf("\nsekarang di ruangan : %c\n",Ruangan->id);
+                    PushHistory(&historyroom, Room_Saat_ini);
+                    Room_Saat_ini = Room_Saat_ini->doors[2];
+                    printRoom(Room_Saat_ini);
+                    printf("\nsekarang di ruangan : %c\n",Room_Saat_ini->id);
                 }
             }
             else if (input == 'S' || input == 's')
             {
                 system("cls");
-                if (Ruangan->doors[1] == NULL)
+                if (Room_Saat_ini->doors[1] == NULL)
                 {
-                    printRoom(Ruangan);
+                    printRoom(Room_Saat_ini);
                     printf("tidak ada ruangan di pintu itu\n\n");
                 }
                 else{
-                    PushHistory(&historyroom, Ruangan);
-                    Ruangan = Ruangan->doors[1];
-                    printRoom(Ruangan);
-                    printf("\nsekarang di ruangan : %c\n",Ruangan->id);
+                    PushHistory(&historyroom, Room_Saat_ini);
+                    Room_Saat_ini = Room_Saat_ini->doors[1];
+                    printRoom(Room_Saat_ini);
+                    printf("\nsekarang di ruangan : %c\n",Room_Saat_ini->id);
                 }            
             }
             else if (input == 'W' || input == 'w')
             {
                 system("cls");
                  if (!IsEmpty(&historyroom)) {
-                    Ruangan = Pop(&historyroom);
-                    printRoom(Ruangan);
-                    printf("\nKembali ke ruangan %c\n\n", Ruangan->id);
+                    Room_Saat_ini = Pop(&historyroom);
+                    printRoom(Room_Saat_ini);
+                    printf("\nKembali ke ruangan %c\n\n", Room_Saat_ini->id);
                 } else {
-                    printRoom(Ruangan);
+                    printRoom(Room_Saat_ini);
                     printf("\nSudah di ruangan awal, tidak bisa kembali.\n\n");
                 }
             }
             else if (input == 'H' || input == 'h')
             {
-                printRoom(Ruangan);
-                printf("\n--- Riwayat Ruangan ---\n");
+                printf("\n--- Riwayat Room_Saat_ini ---\n");
                 PrintHistory(historyroom);
                 printf("\n");
             }
+            else if (input == 'M' || input == 'm')
+            {
+                temukanExit(Room_Saat_ini , RoomRoot);
+            }
             else{
                 printf("\n");
-                printRoom(Ruangan);
+                printRoom(Room_Saat_ini);
                 printf("pintu tidak valid");
             }
         }
@@ -342,4 +345,102 @@ void PrintHistory(StackRoom s) {
         printf("-> %c\n", temp->Rooms->id);
         temp = temp->next;
     }
+}
+
+// ==================================== MENCARI JALUR DARI POSISI SKRG KE PINTU EXIT  =============================================
+char jalur[MAX_ROOMS], jalur_Ke_PosisiSKrg[MAX_ROOMS], jalur_ke_Exit[MAX_ROOMS];
+int panjangJalur;
+
+// Fungsi pencarian exit - SANGAT SEDERHANA!
+bool cariRuangan(ruangan awal, bool sudahDikunjungi[], char idroom) {
+    // Jika ini adalah exit, selesai!
+    if (awal->id == idroom) {
+        jalur[panjangJalur++] = awal->id;
+        return true;
+    }
+    
+    // Tandai sudah dikunjungi
+    sudahDikunjungi[awal->id] = true;
+    jalur[panjangJalur++] = awal->id;
+    
+    // Coba semua pintu
+    for (int i = 0; i < MAX_DOORS; i++) {
+        if (awal->doors[i] != NULL && !sudahDikunjungi[awal->doors[i]->id]) {
+            if (cariRuangan(awal->doors[i], sudahDikunjungi, idroom)) {
+                return true; // Ketemu exit!
+            }
+        }
+    }
+    
+    // Backtrack
+    panjangJalur--;
+    return false;
+}
+
+// Fungsi utama - diperbaiki untuk menampilkan jalur yang benar
+void temukanExit(ruangan posisiSekarang, ruangan rootnya) {
+    // Reset semua variabel
+    bool dikunjungi1[256] = {false}; 
+    bool dikunjungi2[256] = {false}; 
+    panjangJalur = 0;
+    
+    // Cari jalur dari root ke posisi sekarang
+    cariRuangan(rootnya, dikunjungi1, posisiSekarang->id);
+    int pnjgJalurKe_skrg = panjangJalur;
+    for (int i = 0; i < panjangJalur; i++) {
+        jalur_Ke_PosisiSKrg[i] = jalur[i];
+    }
+    
+    // Reset untuk pencarian kedua
+    panjangJalur = 0;
+    
+    // Cari jalur dari root ke exit
+    cariRuangan(rootnya, dikunjungi2, '~');
+    int pnjgJalurExit = panjangJalur;
+    for (int i = 0; i < panjangJalur; i++) {
+        jalur_ke_Exit[i] = jalur[i];
+    }
+
+    printf("Path menuju pintu exit: \n");
+    
+    // Cari titik pertemuan terakhir (LCA - Lowest Common Ancestor)
+    int titikTemu = -1;
+    int maxCheck = (pnjgJalurKe_skrg < pnjgJalurExit) ? pnjgJalurKe_skrg : pnjgJalurExit;
+    
+    for (int i = 0; i < maxCheck; i++) {
+        if (jalur_Ke_PosisiSKrg[i] == jalur_ke_Exit[i]) {
+            titikTemu = i;
+        } else {
+            break;
+        }
+    }
+    
+    // Buat array untuk menyimpan jalur lengkap
+    char jalurLengkap[MAX_ROOMS * 2];
+    int panjangJalurLengkap = 0;
+    
+    // 1. Mundur dari posisi sekarang ke titik pertemuan (TERMASUK titik pertemuan)
+    for (int i = pnjgJalurKe_skrg - 1; i >= titikTemu; i--) {
+        jalurLengkap[panjangJalurLengkap++] = jalur_Ke_PosisiSKrg[i];
+    }
+    
+    // 2. Maju dari setelah titik pertemuan ke exit (tidak termasuk titik pertemuan)
+    for (int i = titikTemu + 1; i < pnjgJalurExit; i++) {
+        jalurLengkap[panjangJalurLengkap++] = jalur_ke_Exit[i];
+    }
+    
+    // Print hasil
+    if (panjangJalurLengkap > 0) {
+        for (int i = 0; i < panjangJalurLengkap; i++) {
+            printf("%c", jalurLengkap[i]);
+            if (i < panjangJalurLengkap - 1) {
+                printf(" => ");
+            }
+        }
+    } else {
+        // Jika tidak ada jalur (berarti sudah di exit)
+        printf("Sudah di exit!");
+    }
+    
+    printf("\n");
 }
