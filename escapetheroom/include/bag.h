@@ -1,3 +1,6 @@
+#ifndef BAG_H
+#define BAG_H
+
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -5,7 +8,7 @@
 
 #define MAX_BAG_SIZE 3
 
-#include "room.h"
+
 
 typedef enum {
     exitKey,
@@ -27,5 +30,6 @@ void initBagStack(bagStack *stack);
 void pushInventory(bagStack *stack, Item item);
 Item popBag(bagStack *stack);
 Item getItem(bagStack *stack); 
-void setItem(bagStack *stack, ruangan room);
 void printBag(bagStack *stack);
+
+#endif

@@ -12,6 +12,7 @@ int main(){
     bagStack inventory;
     bool menu = true;
     initBagStack(&inventory);
+    Player player = {false, false};
 
     pushInventory(&inventory, roomKey);
     pushInventory(&inventory, exitKey);
@@ -39,6 +40,6 @@ int main(){
     TemukanKunciExit(root);
     printRoom(root);
     getch();
-    MasukPintu(root);
+    MasukPintu(root, &inventory, &player);
     return 0;
 }

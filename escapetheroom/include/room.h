@@ -8,6 +8,8 @@
 #include <time.h>
 #include <conio.h>
 
+#include "bag.h"
+
 #define MAX_DOORS 3
 #define MAX_ROOMS 26
 
@@ -21,6 +23,11 @@ typedef struct Room {
     bool visited;
     bool isExit;
 } Room;
+
+typedef struct Player {
+    bool hasExit;
+    bool hasDoor;
+} Player;
 
 typedef struct riwayat {
     ruangan Rooms;
@@ -43,7 +50,7 @@ bool HasEmptyDoor(ruangan room);
 int FindEmptyDoor(ruangan room);
 void BuildRandomRoom(ruangan *root);
 void printRoom(ruangan roomm);
-void MasukPintu(ruangan rooms);
+void MasukPintu(ruangan rooms, bagStack *inventory, Player *player);
 void FindAvailableRoom(ruangan current, ruangan* list, int* count);
 int getKey(ruangan room);
 void createEmpty(StackRoom* s);
