@@ -7,7 +7,13 @@ ruangan CreateRoom(char id) {
         room->id = id;
         room->hasDoorKey = false;
         room->hasExitKey = false;
-        room->isExit = false;
+        if (id == '~')
+        {
+            room->isExit = true;
+        }
+        else{
+            room->isExit = false;
+        }
         for (int i = 0; i < MAX_DOORS; i++) {
             room->doors[i] = NULL;
         }
@@ -104,41 +110,118 @@ void BuildRandomRoom(ruangan* root) {
 
     if (availableCount > 0) {
         ruangan exitRoom = availableExitRooms[rand() % availableCount];
-        exitRoom->isExit = true;
+        int i = 0;
+        while (i < 3)
+        {
+            if (exitRoom->doors[i] == NULL)
+            {break;}
+            else{i++;}
+        }
+        exitRoom->doors[i] = CreateRoom('~');
     }
 }
 
+// void BuildRandomRoom(ruangan rooms[]) {
+//     ruangan available[MAX_ROOMS];
+//     int availableCount = 0;
 
-void printRoom(ruangan roomm){    
-    printf("    ===================    \n");
+//     // untuk membuat   semmua ruangan ieu
+//     for (int i = 0; i < MAX_ROOMS; i++) {
+//         rooms[i] = CreateRoom('A' + i);
+//     }
 
-    printf("    ||       %C       ||    \n",roomm->id);
-    printf("    ||               ||    \n");
+//     // bikin A jadi root
+//     available[availableCount++] = rooms[0];
 
-    if (roomm->doors[0] != NULL){
-    printf("      <<== ");
-    }else{
-    printf("    ||     ");
-    } 
-    if (roomm->doors[2] != NULL)
+//     for (int i = 1; i < MAX_ROOMS; i++) {
+//         ruangan newRoom = rooms[i];
+
+//         // search parent nu    punya pintu kosong
+//         int parentIndex;
+//         do {
+//             parentIndex = rand() % availableCount;
+//         } while (!HasEmptyDoor(available[parentIndex]));
+
+//         ruangan parent = available[parentIndex];
+//         int doorIndex = FindEmptyDoor(parent);
+//         parent->doors[doorIndex] = newRoom;
+        
+//         if (HasEmptyDoor(newRoom)) {
+//             available[availableCount++] = newRoom;
+//         }
+//     }
+// }
+
+void printRoom(ruangan roomm){
+    if (roomm->isExit)
     {
-    printf("       ==>>\n");
-    }else{
-    printf("          ||\n");
+        printf("\n\n");
+        printf("    ##     ## ######## ##    ##    ###    ##    ##  ######   \n");
+        printf("    ###   ### ##       ###   ##   ## ##   ###   ## ##    ##  \n");
+        printf("    #### #### ##       ####  ##  ##   ##  ####  ## ##        \n");
+        printf("    ## ### ## ######   ## ## ## ##     ## ## ## ## ##   #### \n");
+        printf("    ##     ## ##       ##  #### ######### ##  #### ##    ##  \n");
+        printf("    ##     ## ##       ##   ### ##     ## ##   ### ##    ##  \n");
+        printf("    ##     ## ######## ##    ## ##     ## ##    ##  ######   \n\n");
+        printf("    ########   #######  ##    ## \n");
+        printf("    ##     ## ##     ##  ##  ##  \n");
+        printf("    ##     ## ##     ##   ####   \n");
+        printf("    ########  ##     ##    ##    \n");
+        printf("    ##     ## ##     ##    ##    \n");
+        printf("    ##     ## ##     ##    ##    \n");
+        printf("    ########   #######     ##    \n");
     }
-    if (roomm->doors[1] != NULL)
-    {
-    printf("    ||       |       ||    \n");
-    printf("    ||       V       ||    \n");
-    printf("    ========   ========    \n");
-    }else{
-    printf("    ||               ||    \n");
-    printf("    ||               ||    \n");
-    printf("    ===================    \n");
-    }
-    printf("                           \n");
-    if (HasExitRoom(roomm)) {
-        printf("    Ruangan %c memiliki pintu keluar!\n", roomm->id);
+    else{
+            printf("    ===================    \n");
+            printf("    ||       %C       ||    \n",roomm->id);
+            printf("    ||               ||    \n");
+
+        // gambar pintu 1
+        if (roomm->doors[0] != NULL){
+            if (roomm->doors[0]->isExit)
+            {
+                printf("EXIT! <<== ");
+            }else{
+                printf("      <<== ");
+            }
+        }else{
+            printf("    ||     ");
+        }
+
+        // gambar pintu 3
+        if (roomm->doors[2] != NULL)
+        {
+            if (roomm->doors[2]->isExit)
+            {
+                printf("       ==>> EXIT!\n");
+            }
+            else{
+                printf("       ==>>\n");
+            }
+        }else{
+            printf("          ||\n");
+        }
+        
+        // gambar pintu 3
+        if (roomm->doors[1] != NULL)
+        {
+            if (roomm->doors[1]->isExit)
+            {
+                printf("    ||       |       ||    \n");
+                printf("    ||       V       ||    \n");
+                printf("    =====  EXIT!  =====    \n");
+            }
+            else{
+                printf("    ||       |       ||    \n");
+                printf("    ||       V       ||    \n");
+                printf("    ========   ========    \n");
+            }
+        }else{
+        printf("    ||               ||    \n");
+        printf("    ||               ||    \n");
+        printf("    ===================    \n");
+        }
+        printf("                           \n");
     }
 }
 
@@ -165,8 +248,8 @@ void MasukPintu(ruangan rooms){
                 else{
                     PushHistory(&historyroom, Ruangan);
                     Ruangan = Ruangan->doors[0];
-                    printf("\nsekarang di ruangan : %c\n",Ruangan->id);
                     printRoom(Ruangan);
+                    printf("\nsekarang di ruangan : %c\n",Ruangan->id);
                 }
             }
             else if (input == 'D' || input == 'd')
@@ -180,8 +263,8 @@ void MasukPintu(ruangan rooms){
                 else{
                     PushHistory(&historyroom, Ruangan);
                     Ruangan = Ruangan->doors[2];
-                    printf("\nsekarang di ruangan : %c\n",Ruangan->id);
                     printRoom(Ruangan);
+                    printf("\nsekarang di ruangan : %c\n",Ruangan->id);
                 }
             }
             else if (input == 'S' || input == 's')
