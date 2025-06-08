@@ -38,14 +38,6 @@ Item getItem(bagStack *stack) {
     return current;
 }
 
-void setItem(bagStack *stack, ruangan room) {
-    int keyType = getKey(room);
-    if (keyType == 1) {
-        pushInventory(stack, roomKey);
-    } else if (keyType == 2) {
-        pushInventory(stack, exitKey);
-    }
-}
 
 void printBag(bagStack *stack) {
     Bag *current = stack->top;

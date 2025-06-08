@@ -3,6 +3,7 @@
 #include "include/room.h"
 #include "include/bag.h"
 
+extern bool visited[MAX_ROOMS];
 
 int main(){
     srand(time(NULL));
@@ -11,6 +12,7 @@ int main(){
     bagStack inventory;
     bool menu = true;
     initBagStack(&inventory);
+    Player player = {false, false};
 
     pushInventory(&inventory, roomKey);
     pushInventory(&inventory, exitKey);
@@ -24,7 +26,8 @@ int main(){
         printf("3. tekan \' D \' untuk ke pintu sebelah kanan \n");
         printf("4. tekan \' W \' untuk Pindah Ke ruangan sebelumnya yang di datengin \n");
         printf("5. tekan \' H \' untuk melihat list Riwayat ruangan yang di jelajahi sebelumnya \n");
-        printf("6. tekan \' M \' untuk mencari jalur ke EXIT \n\n");
+        printf("6. tekan \' M \' untuk mencari jalur ke EXIT \n");
+        printf("7. tekan \' I \' untuk membuka inventory\n\n");
         printf("Mulai Bermain ?[y/t] : ");
 
         if (getch() == 'y' || getch() == 'Y')
@@ -36,8 +39,9 @@ int main(){
             return 0;
         }
     }
-    printBag(&inventory);
+    resetVisitedAll(root);
+    TemukanKunciExit(root);
     printRoom(root);
-    MasukPintu(root);
+    MasukPintu(root, &inventory, &player);
     return 0;
 }

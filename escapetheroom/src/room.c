@@ -1,6 +1,9 @@
 // Room.c
 #include "../include/room.h"
 
+
+extern bool visited[MAX_ROOMS];
+
 ruangan CreateRoom(char id) {
     ruangan room = (ruangan)malloc(sizeof(Room));
     if (room != NULL) {
@@ -19,6 +22,10 @@ ruangan CreateRoom(char id) {
         }
     }
     return room;
+}
+
+bool HasExitRoom(ruangan room) {
+    return room != NULL && room->isExit;
 }
 
 bool HasDoorKey(ruangan room) {
@@ -57,13 +64,6 @@ int FindEmptyDoor(ruangan room) {
     return indeks[rand() % count];
 }
 
-// int FindEmptyDoor(ruangan room) {
-//     for (int i = 0; i < MAX_DOORS; i++) {
-//         if (room->doors[i] == NULL) return true;
-//     }
-//     return false; // ini klo penuh dia
-// }
-
 void FindAvailableRoom(ruangan current, ruangan* list, int* count) {
     if (current == NULL) return;
     if (HasEmptyDoor(current)) {
@@ -83,7 +83,7 @@ void BuildRandomRoom(ruangan* root) {
     int roomCount = 1;
 
     while (roomCount < MAX_ROOMS) {
-        ruangan candidates[100];  // sementara, hanya untuk proses
+        ruangan candidates[100];
         int count = 0;
 
         FindAvailableRoom(*root, candidates, &count);
@@ -91,7 +91,6 @@ void BuildRandomRoom(ruangan* root) {
 
         ruangan parent = candidates[rand() % count];
         int doorIndex = FindEmptyDoor(parent);
-
         if (doorIndex == -1) continue;
 
         ruangan newRoom = CreateRoom('A' + roomCount);
@@ -104,8 +103,8 @@ void BuildRandomRoom(ruangan* root) {
     int availableCount = 0;
     FindAvailableRoom(*root, availableExitRooms, &availableCount);
 
+    ruangan exitRoom = availableExitRooms[rand() % availableCount];
     if (availableCount > 0) {
-        ruangan exitRoom = availableExitRooms[rand() % availableCount];
         int i = 0;
         while (i < 3)
         {
@@ -115,39 +114,48 @@ void BuildRandomRoom(ruangan* root) {
         }
         exitRoom->doors[i] = CreateRoom('~');
     }
+
+    // pilih ruangan secara acak untuk menyimpan exit key nya
+    ruangan allRooms[100];
+    int allRoomCount = 0;
+    resetVisitedAll(*root);
+    FindAllRooms(*root, allRooms, &allRoomCount);
+
+    if (allRoomCount > 0) {
+        // Pilih ruangan lain untuk simpan exit key
+        ruangan keyRoom = NULL;
+        do {
+            keyRoom = allRooms[rand() % allRoomCount];
+        } while (keyRoom == exitRoom);
+
+        keyRoom->hasExitKey = true;
+    }
 }
 
-// void BuildRandomRoom(ruangan rooms[]) {
-//     ruangan available[MAX_ROOMS];
-//     int availableCount = 0;
 
-//     // untuk membuat   semmua ruangan ieu
-//     for (int i = 0; i < MAX_ROOMS; i++) {
-//         rooms[i] = CreateRoom('A' + i);
-//     }
+void FindAllRooms(ruangan current, ruangan* list, int* count) {
+    if (current == NULL || visited[current->id - 'A']) return;
 
-//     // bikin A jadi root
-//     available[availableCount++] = rooms[0];
+    visited[current->id - 'A'] = true;
+    list[(*count)++] = current;
 
-//     for (int i = 1; i < MAX_ROOMS; i++) {
-//         ruangan newRoom = rooms[i];
+    for (int i = 0; i < MAX_DOORS; i++) {
+        FindAllRooms(current->doors[i], list, count);
+    }
+}
 
-//         // search parent nu    punya pintu kosong
-//         int parentIndex;
-//         do {
-//             parentIndex = rand() % availableCount;
-//         } while (!HasEmptyDoor(available[parentIndex]));
+void ResetVisited(ruangan current) {
+    if (current == NULL || !current->visited) return;
+    current->visited = false;
 
-//         ruangan parent = available[parentIndex];
-//         int doorIndex = FindEmptyDoor(parent);
-//         parent->doors[doorIndex] = newRoom;
-        
-//         if (HasEmptyDoor(newRoom)) {
-//             available[availableCount++] = newRoom;
-//         }
-//     }
-// }
+    for (int i = 0; i < 4; i++) {
+        if (current->doors[i]) {
+            ResetVisited(current->doors[i]);
+        }
+    }
+}
 
+// Perbaikan fungsi printRoom untuk tidak langsung mengambil kunci
 void printRoom(ruangan roomm){
     if (roomm->isExit)
     {
@@ -159,6 +167,7 @@ void printRoom(ruangan roomm){
         printf("    ##     ## ##       ##  #### ######### ##  #### ##    ##  \n");
         printf("    ##     ## ##       ##   ### ##     ## ##   ### ##    ##  \n");
         printf("    ##     ## ######## ##    ## ##     ## ##    ##  ######   \n\n");
+
         printf("    ########   #######  ##    ## \n");
         printf("    ##     ## ##     ##  ##  ##  \n");
         printf("    ##     ## ##     ##   ####   \n");
@@ -217,11 +226,10 @@ void printRoom(ruangan roomm){
         printf("    ||               ||    \n");
         printf("    ===================    \n");
         }
-        printf("                           \n");
     }
 }
 
-void MasukPintu(ruangan rooms){
+void MasukPintu(ruangan rooms, bagStack *inventory, Player *player){
     ruangan Room_Saat_ini = rooms , RoomRoot = rooms; 
     
     StackRoom historyroom;
@@ -240,12 +248,17 @@ void MasukPintu(ruangan rooms){
                 {
                     printRoom(Room_Saat_ini);
                     printf("tidak ada ruangan di pintu itu\n\n");
-                }
-                else{
-                    PushHistory(&historyroom, Room_Saat_ini);
-                    Room_Saat_ini = Room_Saat_ini->doors[0];
-                    printRoom(Room_Saat_ini);
-                    printf("\nsekarang di ruangan : %c\n",Room_Saat_ini->id);
+                }else{
+                // Cek apakah ruangan tujuan adalah exit room dan player belum punya kunci
+                    if (HasExitRoom(Room_Saat_ini->doors[0]) && !player->hasExit) {
+                        printRoom(Room_Saat_ini);
+                        printf("Pintu terkunci! Anda perlu mencari kunci exit terlebih dahulu.\n\n");
+                    }else {
+                        PushHistory(&historyroom, Room_Saat_ini);
+                        Room_Saat_ini = Room_Saat_ini->doors[0];
+                        printRoom(Room_Saat_ini);
+                        printf("\nsekarang di ruangan : %c\n",Room_Saat_ini->id);
+                    }
                 }
             }
             else if (input == 'D' || input == 'd')
@@ -255,12 +268,17 @@ void MasukPintu(ruangan rooms){
                 {
                     printRoom(Room_Saat_ini);
                     printf("tidak ada ruangan di pintu itu\n\n");
-                }
-                else{
-                    PushHistory(&historyroom, Room_Saat_ini);
-                    Room_Saat_ini = Room_Saat_ini->doors[2];
-                    printRoom(Room_Saat_ini);
-                    printf("\nsekarang di ruangan : %c\n",Room_Saat_ini->id);
+                }else{
+                // Cek apakah ruangan tujuan adalah exit room dan player belum punya kunci
+                    if (HasExitRoom(Room_Saat_ini->doors[2]) && !player->hasExit) {
+                        printRoom(Room_Saat_ini);
+                        printf("Pintu terkunci! Anda perlu mencari kunci exit terlebih dahulu.\n\n");
+                    }else {
+                        PushHistory(&historyroom, Room_Saat_ini);
+                        Room_Saat_ini = Room_Saat_ini->doors[2];
+                        printRoom(Room_Saat_ini);
+                        printf("\nsekarang di ruangan : %c\n",Room_Saat_ini->id);
+                    }
                 }
             }
             else if (input == 'S' || input == 's')
@@ -270,13 +288,18 @@ void MasukPintu(ruangan rooms){
                 {
                     printRoom(Room_Saat_ini);
                     printf("tidak ada ruangan di pintu itu\n\n");
+                }else{
+                // Cek apakah ruangan tujuan adalah exit room dan player belum punya kunci
+                    if (HasExitRoom(Room_Saat_ini->doors[1]) && !player->hasExit) {
+                        printRoom(Room_Saat_ini);
+                        printf("Pintu terkunci! Anda perlu mencari kunci exit terlebih dahulu.\n\n");
+                    }else {
+                        PushHistory(&historyroom, Room_Saat_ini);
+                        Room_Saat_ini = Room_Saat_ini->doors[1];
+                        printRoom(Room_Saat_ini);
+                        printf("\nsekarang di ruangan : %c\n",Room_Saat_ini->id);
+                    }
                 }
-                else{
-                    PushHistory(&historyroom, Room_Saat_ini);
-                    Room_Saat_ini = Room_Saat_ini->doors[1];
-                    printRoom(Room_Saat_ini);
-                    printf("\nsekarang di ruangan : %c\n",Room_Saat_ini->id);
-                }            
             }
             else if (input == 'W' || input == 'w')
             {
@@ -300,10 +323,20 @@ void MasukPintu(ruangan rooms){
             {
                 temukanExit(Room_Saat_ini , RoomRoot);
             }
+            else if (input == 'I' || input == 'i') {
+                system("cls");
+                printRoom(Room_Saat_ini);
+                printf("\n--- Inventory ---\n");
+                printBag(inventory);
+            }
             else{
                 printf("\n");
                 printRoom(Room_Saat_ini);
                 printf("pintu tidak valid");
+            }
+            if (HasExitKey(Room_Saat_ini)) {
+                player->hasExit = true;
+                printf("Anda menemukan kunci exit!\n");
             }
         }
     } while (1);
@@ -443,4 +476,50 @@ void temukanExit(ruangan posisiSekarang, ruangan rootnya) {
     }
     
     printf("\n");
+}
+
+bool visited[MAX_ROOMS]; // definisi global
+
+ruangan FindExitRoom(ruangan current) {
+    if (current == NULL) return NULL;
+
+    if (HasExitRoom(current)) {
+        return current;
+    }
+
+    visited[current->id - 'A'] = true;
+
+    for (int i = 0; i < MAX_DOORS; i++) {
+        ruangan next = current->doors[i];
+        if (next != NULL && !visited[next->id - 'A']) {
+            ruangan found = FindExitRoom(next);
+            if (found != NULL) {
+                return found;
+            }
+        }
+    }
+
+    return NULL;
+}
+
+void TemukanKunciExit(ruangan current) {
+    if (current == NULL) return;
+
+    int idx = current->id - 'A';
+    if (idx < 0 || idx >= MAX_ROOMS || visited[idx]) return;
+
+    visited[idx] = true;
+
+    if (current->hasExitKey) {
+        printf("Kunci exit ditemukan di ruangan %c\n", current->id);
+    }
+
+    for (int i = 0; i < MAX_DOORS; i++) {
+        TemukanKunciExit(current->doors[i]);
+    }
+}
+
+
+void resetVisitedAll(ruangan root) {
+    for (int i = 0; i < MAX_ROOMS; i++) visited[i] = false;
 }
