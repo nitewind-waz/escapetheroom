@@ -18,6 +18,7 @@ typedef struct Room {
     ruangan doors[MAX_DOORS];
     bool hasDoorKey;
     bool hasExitKey;
+    bool visited;
     bool isExit;
 } Room;
 
@@ -50,5 +51,8 @@ void PushHistory(StackRoom* s, ruangan Room);
 ruangan Pop(StackRoom* s);
 bool IsEmpty (StackRoom* S);
 void PrintHistory(StackRoom s);
-
+void FindAllRooms(ruangan current, ruangan* list, int* count);
+void ResetVisited(ruangan current);
+void TemukanKunciExit(ruangan current);
+void resetVisitedAll(ruangan root);
 #endif

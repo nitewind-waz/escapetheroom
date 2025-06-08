@@ -35,8 +35,10 @@ int main(){
             return 0;
         }
     }
-    printBag(&inventory);
+    resetVisitedAll(root);
+    TemukanKunciExit(root);
     printRoom(root);
+    getch();
     MasukPintu(root);
     return 0;
 }
