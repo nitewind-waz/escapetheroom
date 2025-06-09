@@ -9,7 +9,6 @@ ruangan CreateRoom(char id) {
     ruangan room = (ruangan)malloc(sizeof(Room));
     if (room != NULL) {
         room->id = id;
-        room->hasDoorKey = false;
         room->hasExitKey = false;
         if (id == '~')
         {
@@ -29,17 +28,12 @@ bool HasExitRoom(ruangan room) {
     return room != NULL && room->isExit;
 }
 
-bool HasDoorKey(ruangan room) {
-    return room != NULL && room->hasDoorKey;
-}
-
 bool HasExitKey(ruangan room) {
     return room != NULL && room->hasExitKey;
 }
 
 int getKey(ruangan room) {
     if (room == NULL) return -1;
-    if (HasDoorKey(room)) return 1;
     if (HasExitKey(room)) return 2;
     return 0;
 }
@@ -333,19 +327,10 @@ void MasukPintu(ruangan rooms, bagStack *inventory, Player *player){
             {
                 system("cls");
                  if (!IsEmpty(&historyroom)) {
-                    ruangan prevRoom = Pop(&historyroom);
-
-                    // Cek apakah ruangan sebelumnya terkunci
-                    if (isRoomLocked(&lockedRooms, prevRoom->id)) {
-                        printf("ruangan sebelumnya terkunci! Gunakan kunci ruangan (tekan 'K') untuk membuka.\n");
-                        PushHistory(&historyroom, prevRoom);
-                    }
-                    else{
                         stepCount++;
-                        Room_Saat_ini = prevRoom;
+                        Room_Saat_ini = Pop(&historyroom);
                         printRoom(Room_Saat_ini);
                         printf("\nKembali ke ruangan %c\n\n", Room_Saat_ini->id);
-                    }
                     
                 } else {
                     printRoom(Room_Saat_ini);
@@ -372,12 +357,29 @@ void MasukPintu(ruangan rooms, bagStack *inventory, Player *player){
             {
                 printLockedQueue(lockedRooms);
             }
-            
             else if (input == 'K' || input == 'k') {
                 // Fitur baru: Gunakan kunci untuk membuka ruangan
                 if (!isLockedQueueEmpty(&lockedRooms)) {
-                    char unlockedRoom = dequeueLockedRoom(&lockedRooms);
-                    printf("\nAnda menggunakan kunci untuk membuka ruangan %c!\n", unlockedRoom);
+                    int foundLockedDoor = 0;
+
+                    for (int i = 0; i < 3; i++) {
+                        if (Room_Saat_ini->doors[i] != NULL) {
+                            char doorID = Room_Saat_ini->doors[i]->id;
+
+                            if (isRoomLocked(&lockedRooms, doorID) &&
+                                doorID == lockedRooms.front->roomID) {
+
+                                char unlockedRoom = dequeueLockedRoom(&lockedRooms);
+                                printf("\nAnda menggunakan kunci untuk membuka ruangan %c!\n", unlockedRoom);
+                                foundLockedDoor = 1;
+                                break; // selesai setelah membuka satu pintu
+                            }
+                        }
+                    }
+
+                    if (!foundLockedDoor) {
+                        printf("Tidak ada pintu terkunci di ruangan ini atau bukan pintu pertama yang terkunci.\n");
+                    }
                 } else {
                     printf("\nTidak ada ruangan yang terkunci saat ini.\n");
                 }
@@ -393,8 +395,8 @@ void MasukPintu(ruangan rooms, bagStack *inventory, Player *player){
                 LockRandomRoom(Room_Saat_ini, &lockedRooms,RoomRoot);
                 lastLockedStep = stepCount;
             }
-            
             printf("\nJumlah Langkah : %d \n",stepCount);
+            
             if (HasExitKey(Room_Saat_ini)) {
                 player->hasExit = true;
                 printf("Anda menemukan kunci exit!\n");

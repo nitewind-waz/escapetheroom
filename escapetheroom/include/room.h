@@ -18,7 +18,6 @@ typedef struct Room *ruangan;
 typedef struct Room {
     char id;
     ruangan doors[MAX_DOORS];
-    bool hasDoorKey;
     bool hasExitKey;
     bool visited;
     bool isExit;
@@ -32,7 +31,6 @@ typedef struct Player {
 // extern ruangan allRooms[MAX_ROOMS];
 ruangan FindExitRoom(ruangan current); 
 bool HasExitKey(ruangan room);
-bool HasDoorKey(ruangan room);
 bool HasExitRoom(ruangan room);
 ruangan CreateRoom(char id);
 bool HasEmptyDoor(ruangan room);
