@@ -1,5 +1,5 @@
-// Room.c
 #include "../include/room.h"
+#include "../include/lockedroom.h"
 
 
 extern bool visited[MAX_ROOMS];
@@ -194,67 +194,97 @@ void ResetVisited(ruangan current) {
 
 // Perbaikan untuk fungsi MasukPintu dengan win condition yang lebih jelas
 // Perbaikan untuk fungsi MasukPintu dengan win condition yang lebih jelas
-void MasukPintu(ruangan rooms, bagStack *inventory, Player *player){
+void MasukPintu(ruangan rooms, bagStack *inventory, Player *player) {
     ruangan Ruangan = rooms; 
     
     StackRoom historyroom;
     createEmpty(&historyroom);
     
+    // Inisialisasi antrian ruangan terkunci dan penghitung langkah
+    LockedQueue lockedRooms;
+    initLockedQueue(&lockedRooms);
+    int stepCount = 0;
+    
     char input;
-    do
-    {
-        if (kbhit())
-        {
+    do {
+        if (kbhit()) {
             input = getch();
-            if (input == 'A' || input == 'a')
-            {
+            stepCount++; // Tambah penghitung langkah setiap input
+            
+            // Setiap 10 langkah, kunci ruangan acak
+            if (stepCount % 10 == 0) {
+                ruangan allRooms[100];
+                int allRoomCount = 0;
+                resetVisitedAll(Ruangan);
+                FindAllRooms(Ruangan, allRooms, &allRoomCount);
+                
+                if (allRoomCount > 0) {
+                    ruangan roomToLock = allRooms[rand() % allRoomCount];
+                    // Pastikan ruangan exit tidak dikunci
+                    if (!HasExitRoom(roomToLock)) {
+                        enqueueLockedRoom(&lockedRooms, roomToLock->id);
+                        printf("\nPERINGATAN: Ruangan %c terkunci otomatis!\n", roomToLock->id);
+                    }
+                }
+            }
+            
+            if (input == 'A' || input == 'a') {
                 system("cls");
-                if (Ruangan->doors[0] == NULL)
-                {
+                if (Ruangan->doors[0] == NULL) {
                     printRoom(Ruangan);
                     printf("tidak ada ruangan di pintu itu\n\n");
-                }
-                else{
-                    // Cek apakah ruangan tujuan adalah exit room dan player belum punya kunci
-                    if (HasExitRoom(Ruangan->doors[0]) && !player->hasExit) {
+                } else {
+                    // Cek apakah ruangan terkunci
+                    if (isRoomLocked(&lockedRooms, Ruangan->doors[0]->id)) {
                         printRoom(Ruangan);
-                        printf("Pintu terkunci! Anda perlu mencari kunci exit terlebih dahulu.\n\n");
-                    }
-                    else {
+                        printf("Pintu terkunci! Gunakan kunci ruangan (tekan 'K') untuk membuka.\n\n");
+                    } 
+                    // Cek apakah ruangan exit dan belum punya kunci
+                    else if (HasExitRoom(Ruangan->doors[0])) {
+                        if (!player->hasExit) {
+                            printRoom(Ruangan);
+                            printf("Pintu terkunci! Anda perlu mencari kunci exit terlebih dahulu.\n\n");
+                        } else {
+                            // Masuk ke ruangan exit jika punya kunci
+                            PushHistory(&historyroom, Ruangan);
+                            Ruangan = Ruangan->doors[0];
+                            printRoom(Ruangan);
+                            printf("\nsekarang di ruangan: %c\n", Ruangan->id);
+                        }
+                    } else {
+                        // Masuk ke ruangan normal
                         PushHistory(&historyroom, Ruangan);
                         Ruangan = Ruangan->doors[0];
                         printRoom(Ruangan);
-                        printf("\nsekarang di ruangan : %c\n",Ruangan->id);
+                        printf("\nsekarang di ruangan: %c\n", Ruangan->id);
                         
-                        // Cek apakah ada kunci exit di ruangan ini
+                        // Cek kunci exit di ruangan baru
                         if (HasExitKey(Ruangan)) {
                             player->hasExit = true;
                             printf("Anda menemukan kunci exit!\n");
                         }
                     }
                 }
-            }
-            else if (input == 'D' || input == 'd')
-            {
+            } 
+            else if (input == 'D' || input == 'd') {
+                // [Logika yang sama seperti di atas untuk pintu kanan]
                 system("cls");
-                if (Ruangan->doors[2] == NULL)
-                {
+                if (Ruangan->doors[2] == NULL) {
                     printRoom(Ruangan);
                     printf("tidak ada ruangan di pintu itu\n\n");
-                }
-                else{
-                    // Cek apakah ruangan tujuan adalah exit room dan player belum punya kunci
-                    if (HasExitRoom(Ruangan->doors[2]) && !player->hasExit) {
+                } else {
+                    if (isRoomLocked(&lockedRooms, Ruangan->doors[2]->id)) {
+                        printRoom(Ruangan);
+                        printf("Pintu terkunci! Gunakan kunci ruangan (tekan 'K') untuk membuka.\n\n");
+                    } else if (HasExitRoom(Ruangan->doors[2]) && !player->hasExit) {
                         printRoom(Ruangan);
                         printf("Pintu terkunci! Anda perlu mencari kunci exit terlebih dahulu.\n\n");
-                    }
-                    else {
+                    } else {
                         PushHistory(&historyroom, Ruangan);
                         Ruangan = Ruangan->doors[2];
                         printRoom(Ruangan);
-                        printf("\nsekarang di ruangan : %c\n",Ruangan->id);
+                        printf("\nsekarang di ruangan: %c\n", Ruangan->id);
                         
-                        // Cek apakah ada kunci exit di ruangan ini
                         if (HasExitKey(Ruangan)) {
                             player->hasExit = true;
                             printf("Anda menemukan kunci exit!\n");
@@ -262,38 +292,35 @@ void MasukPintu(ruangan rooms, bagStack *inventory, Player *player){
                     }
                 }
             }
-            else if (input == 'S' || input == 's')
-            {
+            else if (input == 'S' || input == 's') {
+                // [Logika yang sama seperti di atas untuk pintu bawah]
                 system("cls");
-                if (Ruangan->doors[1] == NULL)
-                {
+                if (Ruangan->doors[1] == NULL) {
                     printRoom(Ruangan);
                     printf("tidak ada ruangan di pintu itu\n\n");
-                }
-                else{
-                    // Cek apakah ruangan tujuan adalah exit room dan player belum punya kunci
-                    if (HasExitRoom(Ruangan->doors[1]) && !player->hasExit) {
+                } else {
+                    if (isRoomLocked(&lockedRooms, Ruangan->doors[1]->id)) {
+                        printRoom(Ruangan);
+                        printf("Pintu terkunci! Gunakan kunci ruangan (tekan 'K') untuk membuka.\n\n");
+                    } else if (HasExitRoom(Ruangan->doors[1]) && !player->hasExit) {
                         printRoom(Ruangan);
                         printf("Pintu terkunci! Anda perlu mencari kunci exit terlebih dahulu.\n\n");
-                    }
-                    else {
+                    } else {
                         PushHistory(&historyroom, Ruangan);
                         Ruangan = Ruangan->doors[1];
                         printRoom(Ruangan);
-                        printf("\nsekarang di ruangan : %c\n",Ruangan->id);
+                        printf("\nsekarang di ruangan: %c\n", Ruangan->id);
                         
-                        // Cek apakah ada kunci exit di ruangan ini
                         if (HasExitKey(Ruangan)) {
                             player->hasExit = true;
                             printf("Anda menemukan kunci exit!\n");
                         }
                     }
-                }            
+                }
             }
-            else if (input == 'W' || input == 'w')
-            {
+            else if (input == 'W' || input == 'w') {
                 system("cls");
-                 if (!IsEmpty(&historyroom)) {
+                if (!IsEmpty(&historyroom)) {
                     Ruangan = Pop(&historyroom);
                     printRoom(Ruangan);
                     printf("\nKembali ke ruangan %c\n\n", Ruangan->id);
@@ -302,8 +329,7 @@ void MasukPintu(ruangan rooms, bagStack *inventory, Player *player){
                     printf("\nSudah di ruangan awal, tidak bisa kembali.\n\n");
                 }
             }
-            else if (input == 'H' || input == 'h')
-            {
+            else if (input == 'H' || input == 'h') {
                 printRoom(Ruangan);
                 printf("\n--- Riwayat Ruangan ---\n");
                 PrintHistory(historyroom);
@@ -315,18 +341,26 @@ void MasukPintu(ruangan rooms, bagStack *inventory, Player *player){
                 printf("\n--- Inventory ---\n");
                 printBag(inventory);
             }
-            else{
+            else if (input == 'K' || input == 'k') {
+                // Fitur baru: Gunakan kunci untuk membuka ruangan
+                if (!isLockedQueueEmpty(&lockedRooms)) {
+                    char unlockedRoom = dequeueLockedRoom(&lockedRooms);
+                    printf("\nAnda menggunakan kunci untuk membuka ruangan %c!\n", unlockedRoom);
+                } else {
+                    printf("\nTidak ada ruangan yang terkunci saat ini.\n");
+                }
+            }
+            else {
                 printf("\n");
                 printRoom(Ruangan);
-                printf("pintu tidak valid");
+                printf("Input tidak valid");
             }
 
-            // Win condition: Jika player sudah punya kunci exit dan berada di ruangan exit
+            // Win condition
             if (HasExitRoom(Ruangan) && player->hasExit) {
                 printf("Anda telah menemukan pintu keluar dan memiliki kunci!\n");
                 printf("Tekan 'E' untuk keluar dan menang!\n");
                 if (input == 'E' || input == 'e') {
-                    // PLAYER MENANG!
                     system("cls");
                     printf("\n");
                     printRoom(Ruangan);

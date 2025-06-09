@@ -38,7 +38,6 @@ Item getItem(bagStack *stack) {
     return current;
 }
 
-
 void printBag(bagStack *stack) {
     Bag *current = stack->top;
     if (current == NULL) {

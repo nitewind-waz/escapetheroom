@@ -1,20 +1,26 @@
 #ifndef LOCKEDROOM_H
 #define LOCKEDROOM_H
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdbool.h>
 
+// Struktur node untuk ruangan terkunci
 typedef struct LockedRoom {
-    char roomId;
-    struct LockedRoom *next;
+    char roomID;             
+    struct LockedRoom *next;  
 } LockedRoom;
 
+// Struktur antrian untuk ruangan terkunci
 typedef struct {
-    LockedRoom *front, *rear;
+    LockedRoom *front;  
+    LockedRoom *rear;   
 } LockedQueue;
 
-void initLockedQueue(LockedQueue *q);
+// Fungsi untuk menginisialisasi antrian
+void initLockedQueue(LockedQueue *queue);
+void enqueueLockedRoom(LockedQueue *queue, char roomID);
+char dequeueLockedRoom(LockedQueue *queue);
+bool isLockedQueueEmpty(LockedQueue *queue);
+bool isRoomLocked(LockedQueue *queue, char roomID);
+void clearLockedQueue(LockedQueue *queue);
 
-
-
-#endif // LOCKEDROOM_H
+#endif

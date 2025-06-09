@@ -8,13 +8,10 @@
 
 #define MAX_BAG_SIZE 3
 
-
-
 typedef enum {
     exitKey,
     roomKey,
 } Item;
-
 
 typedef struct Bag {
     Item items;
