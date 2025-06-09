@@ -1,7 +1,7 @@
-
 // Library luar
 #include "include/room.h"
 #include "include/bag.h"
+#include "include/lockedroom.h"  // Tambahkan ini untuk sistem ruangan terkunci
 
 extern bool visited[MAX_ROOMS];
 
@@ -13,6 +13,10 @@ int main(){
     bool menu = true;
     initBagStack(&inventory);
     Player player = {false, false};
+
+    // Inisialisasi sistem ruangan terkunci
+    LockedQueue lockedRooms;
+    initLockedQueue(&lockedRooms);
 
     pushInventory(&inventory, roomKey);
     pushInventory(&inventory, exitKey);

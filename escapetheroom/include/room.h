@@ -38,8 +38,6 @@ typedef struct {
     riwayat *top;
 } StackRoom;
 
-
-
 // extern ruangan allRooms[MAX_ROOMS];
 ruangan FindExitRoom(ruangan current); 
 bool HasExitKey(ruangan room);
@@ -65,4 +63,5 @@ void FindAllRooms(ruangan current, ruangan* list, int* count);
 void ResetVisited(ruangan current);
 void TemukanKunciExit(ruangan current);
 void resetVisitedAll(ruangan root);
+
 #endif
