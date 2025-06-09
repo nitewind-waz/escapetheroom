@@ -46,7 +46,7 @@ bool HasEmptyDoor(ruangan room) {
 }
 
 int FindEmptyDoor(ruangan room) {
-     int indeks[MAX_DOORS];
+    int indeks[MAX_DOORS];
     int count = 0;
 
     for (int i = 0; i < MAX_DOORS; i++) {
@@ -78,13 +78,13 @@ void BuildRandomRoom(ruangan* root) {
     int roomCount = 1;
 
     while (roomCount < MAX_ROOMS) {
-        ruangan candidates[100];
+        ruangan Listruangan[MAX_ROOMS];
         int count = 0;
 
-        FindAvailableRoom(*root, candidates, &count);
+        FindAvailableRoom(*root, Listruangan, &count);
         if (count == 0) break;
 
-        ruangan parent = candidates[rand() % count];
+        ruangan parent = Listruangan[rand() % count];
         int doorIndex = FindEmptyDoor(parent);
         if (doorIndex == -1) continue;
 
@@ -94,7 +94,7 @@ void BuildRandomRoom(ruangan* root) {
     }
 
     // tandai ruangan exit secara acak dari ruangan yang punya pintu kosong
-    ruangan availableExitRooms[100];
+    ruangan availableExitRooms[26];
     int availableCount = 0;
     FindAvailableRoom(*root, availableExitRooms, &availableCount);
 
@@ -111,7 +111,7 @@ void BuildRandomRoom(ruangan* root) {
     }
 
     // pilih ruangan secara acak untuk menyimpan exit key nya
-    ruangan allRooms[100];
+    ruangan allRooms[26];
     int allRoomCount = 0;
     resetVisitedAll(*root);
     FindAllRooms(*root, allRooms, &allRoomCount);
@@ -136,17 +136,6 @@ void FindAllRooms(ruangan current, ruangan* list, int* count) {
 
     for (int i = 0; i < MAX_DOORS; i++) {
         FindAllRooms(current->doors[i], list, count);
-    }
-}
-
-void ResetVisited(ruangan current) {
-    if (current == NULL || !current->visited) return;
-    current->visited = false;
-
-    for (int i = 0; i < 4; i++) {
-        if (current->doors[i]) {
-            ResetVisited(current->doors[i]);
-        }
     }
 }
 
@@ -576,7 +565,7 @@ void resetVisitedAll(ruangan root) {
 
     for (int i = 0; i < MAX_DOORS; i++) {
         if (root->doors[i] != NULL) {
-            ResetVisited(root->doors[i]);
+            resetVisitedAll(root->doors[i]);
         }
     }
 }
