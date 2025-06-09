@@ -224,7 +224,7 @@ void printRoom(ruangan roomm){
     }
 }
 
-void MasukPintu(ruangan rooms, bagStack *inventory, Player *player){
+void MasukPintu(ruangan rooms, bagList *inventory, Player *player){
     ruangan Room_Saat_ini = rooms , RoomRoot = rooms; 
     
     StackRoom historyroom;
@@ -370,6 +370,7 @@ void MasukPintu(ruangan rooms, bagStack *inventory, Player *player){
                                 doorID == lockedRooms.front->roomID) {
 
                                 char unlockedRoom = dequeueLockedRoom(&lockedRooms);
+                                deleteBag(inventory, roomKey);
                                 printf("\nAnda menggunakan kunci untuk membuka ruangan %c!\n", unlockedRoom);
                                 foundLockedDoor = 1;
                                 break; // selesai setelah membuka satu pintu

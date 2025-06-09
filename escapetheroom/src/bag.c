@@ -1,45 +1,52 @@
 #include "../include/bag.h"
 #include "../include/room.h"
 
-void initBagStack(bagStack *stack) {
-    stack->top = NULL;
+void initBagList(bagList *list) {
+    list->head = NULL;
+    setInventory(list);
 }
 
-void pushInventory(bagStack *stack, Item item) {
+void insertInventory(bagList *list, Item item) {
     Bag *newBag = (Bag *)malloc(sizeof(Bag));
     if (newBag == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
         return;
     }
     newBag->items = item;
-    newBag->next = stack->top;
-    stack->top = newBag;
+    newBag->next = list->head;
+    list->head = newBag;
 }
 
-Item popBag(bagStack *stack) {
-    if (stack->top == NULL) {
-        fprintf(stderr, "Stack is empty, cannot pop\n");
-        return -1; // Return -1 as error indicator (outside enum range)
+void deleteBag(bagList *list, Item item) {
+    if (list->head == NULL) {
+        fprintf(stderr, "Bag is empty, nothing to delete\n");
+        return;
     }
-    Bag *temp = stack->top;
-    Item current = temp->items;
-    stack->top = stack->top->next;
+
+    Bag *temp = list->head;
+    Bag *prev = NULL;
+
+    while (temp != NULL && temp->items != item) {
+        prev = temp;
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        fprintf(stderr, "Item not found in the bag\n");
+        return;
+    }
+
+    if (prev == NULL) {
+        list->head = temp->next;
+    } else {
+        prev->next = temp->next;
+    }
+
     free(temp);
-
-    return current;
 }
 
-Item getItem(bagStack *stack) {
-    Item current = popBag(stack);
-    if (current == -1) {
-        fprintf(stderr, "No items in the bag\n");
-        return -1; // Return -1 for error
-    }
-    return current;
-}
-
-void printBag(bagStack *stack) {
-    Bag *current = stack->top;
+void printBag(bagList *list) {
+    Bag *current = list->head;
     if (current == NULL) {
         printf("Bag is empty.\n");
         return;
@@ -52,5 +59,11 @@ void printBag(bagStack *stack) {
             printf("- Room Key\n");
         }
         current = current->next;
+    }
+}
+
+void setInventory(bagList *list){
+    for (int i = 0; i < 5; i++) {
+        insertInventory(list, roomKey);
     }
 }
