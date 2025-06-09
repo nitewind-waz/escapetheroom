@@ -24,9 +24,10 @@ typedef struct bagStack
 } bagList;
 
 void initBagList(bagList *list);
-void pushInventory(bagList *list, Item item);
+void insertInventory(bagList *list, Item item);
 void deleteBag(bagList *list, Item item);
 void printBag(bagList *list);
 void setInventory (bagList *list);
+bool pHasDoor(bagList *list);
 
 #endif
