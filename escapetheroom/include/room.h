@@ -29,21 +29,19 @@ typedef struct Player {
 } Player;
 
 // extern ruangan allRooms[MAX_ROOMS];
-ruangan FindExitRoom(ruangan current); 
 bool HasExitKey(ruangan room);
-bool HasExitRoom(ruangan room);
-ruangan CreateRoom(char id);
-bool HasEmptyDoor(ruangan room);
-int FindEmptyDoor(ruangan room);
-void BuildRandomRoom(ruangan *root);
-void printRoom(ruangan roomm);
-void MasukPintu(ruangan rooms, bagList *inventory, Player *player);
-void FindAvailableRoom(ruangan current, ruangan* list, int* count);
-int getKey(ruangan room);
+bool HasExitRoom(ruangan room);//
+ruangan CreateRoom(char id);//
+bool HasEmptyDoor(ruangan room);//
+int FindEmptyDoor(ruangan room);//
+void BuildRandomRoom(ruangan *root);//
+void printRoom(ruangan roomm);//
+void game(ruangan rooms, bagList *inventory, Player *player);//
+void FindAvailableRoom(ruangan current, ruangan* list, int* count);//
 
-bool cariRuangan(ruangan awal, bool sudahDikunjungi[], char idroom);
-ruangan findRoomById(ruangan root, char targetId);
-void temukanExit(ruangan posisiSekarang, ruangan rootnya);
+bool cariRuangan(ruangan awal, bool sudahDikunjungi[], char idroom);//
+ruangan findRoomById(ruangan root, char targetId);//
+void temukanExit(ruangan posisiSekarang, ruangan rootnya);//
 void FindAllRooms(ruangan current, ruangan* list, int* count);
 void resetVisitedAll(ruangan current);
 

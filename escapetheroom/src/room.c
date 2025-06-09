@@ -33,12 +33,6 @@ bool HasExitKey(ruangan room) {
     return room != NULL && room->hasExitKey;
 }
 
-int getKey(ruangan room) {
-    if (room == NULL) return -1;
-    if (HasExitKey(room)) return 2;
-    return 0;
-}
-
 bool HasEmptyDoor(ruangan room) {
     for (int i = 0; i < MAX_DOORS; i++) {
         if (room->doors[i] == NULL) return true;
@@ -210,9 +204,8 @@ void printRoom(ruangan roomm){
     }
 }
 
-void MasukPintu(ruangan rooms, bagList *inventory, Player *player){
+void game(ruangan rooms, bagList *inventory, Player *player){
     ruangan Room_Saat_ini = rooms , RoomRoot = rooms; 
-    
     StackRoom historyroom;
     createEmpty(&historyroom);
     
@@ -537,28 +530,6 @@ void temukanExit(ruangan posisiSekarang, ruangan rootnya) {
 }
 
 bool visited[MAX_ROOMS]; // definisi global
-
-ruangan FindExitRoom(ruangan current) {
-    if (current == NULL) return NULL;
-
-    if (HasExitRoom(current)) {
-        return current;
-    }
-
-    visited[current->id - 'A'] = true;
-
-    for (int i = 0; i < MAX_DOORS; i++) {
-        ruangan next = current->doors[i];
-        if (next != NULL && !visited[next->id - 'A']) {
-            ruangan found = FindExitRoom(next);
-            if (found != NULL) {
-                return found;
-            }
-        }
-    }
-
-    return NULL;
-}
 
 void resetVisitedAll(ruangan root) {
     if (root == NULL || root->visited == false)

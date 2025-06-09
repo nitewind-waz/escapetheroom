@@ -43,6 +43,6 @@ int main(){
     }
     
     printRoom(root);
-    MasukPintu(root, &inventory, &player);
+    game(root, &inventory, &player);
     return 0;
 }

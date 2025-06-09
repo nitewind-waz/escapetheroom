@@ -84,33 +84,33 @@ void clearLockedQueue(LockedQueue *queue) {
 }
 
 // Fungsi untuk mengumpulkan kandidat ruangan
-void FindCandidateRooms(ruangan currentRoom, ruangan* candidateList, int* candidateCount, LockedQueue* lockedQueue, ruangan root) {
-    *candidateCount = 0;
+void FindRuanganListRooms(ruangan currentRoom, ruangan* RuanganListList, int* RuanganListCount, LockedQueue* lockedQueue, ruangan root) {
+    *RuanganListCount = 0;
     
     // Kandidat awal: Node di bawah posisi saat ini (doors[0-2])
     for (int i = 0; i < 3; i++) {
         if (currentRoom->doors[i] != NULL) {
-            candidateList[(*candidateCount)++] = currentRoom->doors[i];
+            RuanganListList[(*RuanganListCount)++] = currentRoom->doors[i];
         }
     }
     
     // Cek apakah ada node terkunci di kandidat awal
-    bool hasLockedInCandidates = false;
-    for (int i = 0; i < *candidateCount; i++) {
-        if (isRoomLocked(lockedQueue, candidateList[i]->id)) {
-            hasLockedInCandidates = true;
+    bool hasLockedInRuanganLists = false;
+    for (int i = 0; i < *RuanganListCount; i++) {
+        if (isRoomLocked(lockedQueue, RuanganListList[i]->id)) {
+            hasLockedInRuanganLists = true;
             break;
         }
     }
     
-    if (hasLockedInCandidates) {
+    if (hasLockedInRuanganLists) {
         // Reset kandidat
-        *candidateCount = 0;
+        *RuanganListCount = 0;
         
         // Tambahkan node di bawah posisi saat ini yang TIDAK terkunci
         for (int i = 0; i < 3; i++) {
             if (currentRoom->doors[i] != NULL && !isRoomLocked(lockedQueue, currentRoom->doors[i]->id)) {
-                candidateList[(*candidateCount)++] = currentRoom->doors[i];
+                RuanganListList[(*RuanganListCount)++] = currentRoom->doors[i];
             }
         }
         
@@ -121,7 +121,7 @@ void FindCandidateRooms(ruangan currentRoom, ruangan* candidateList, int* candid
             if (lockedRoom != NULL) {
                 for (int i = 0; i < 3; i++) {
                     if (lockedRoom->doors[i] != NULL) {
-                        candidateList[(*candidateCount)++] = lockedRoom->doors[i];
+                        RuanganListList[(*RuanganListCount)++] = lockedRoom->doors[i];
                     }
                 }
             }
@@ -132,13 +132,13 @@ void FindCandidateRooms(ruangan currentRoom, ruangan* candidateList, int* candid
 
 // Fungsi utama untuk mengunci ruangan
 void LockRandomRoom(ruangan currentRoom, LockedQueue* lockedQueue, ruangan root) {
-    ruangan candidateRooms[MAX_ROOMS];
-    int candidateCount = 0;
+    ruangan RuanganListRooms[MAX_ROOMS];
+    int RuanganListCount = 0;
     
-    FindCandidateRooms(currentRoom, candidateRooms, &candidateCount, lockedQueue, root);
+    FindRuanganListRooms(currentRoom, RuanganListRooms, &RuanganListCount, lockedQueue, root);
     
-    if (candidateCount > 0) {
-        ruangan roomToLock = candidateRooms[rand() % candidateCount];
+    if (RuanganListCount > 0) {
+        ruangan roomToLock = RuanganListRooms[rand() % RuanganListCount];
         
         if (!HasExitRoom(roomToLock) && !isRoomLocked(lockedQueue, roomToLock->id)) {
             enqueueLockedRoom(lockedQueue, roomToLock->id);
