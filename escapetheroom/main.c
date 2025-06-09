@@ -9,17 +9,14 @@ int main(){
     srand(time(NULL));
     ruangan root = NULL;
     riwayat* roomhistory = NULL;
-    bagStack inventory;
+    bagList inventory;
     bool menu = true;
-    initBagStack(&inventory);
+    initBagList(&inventory);
     Player player = {false, false};
 
     // Inisialisasi sistem ruangan terkunci
     LockedQueue lockedRooms;
     initLockedQueue(&lockedRooms);
-
-    pushInventory(&inventory, roomKey);
-    pushInventory(&inventory, exitKey);
     BuildRandomRoom(&root);
     while (menu )
     {

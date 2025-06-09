@@ -20,13 +20,13 @@ typedef struct Bag {
 
 typedef struct bagStack
 {
-    Bag *top;
-} bagStack;
+    Bag *head;
+} bagList;
 
-void initBagStack(bagStack *stack);
-void pushInventory(bagStack *stack, Item item);
-Item popBag(bagStack *stack);
-Item getItem(bagStack *stack); 
-void printBag(bagStack *stack);
+void initBagList(bagList *list);
+void pushInventory(bagList *list, Item item);
+void deleteBag(bagList *list, Item item);
+void printBag(bagList *list);
+void setInventory (bagList *list);
 
 #endif

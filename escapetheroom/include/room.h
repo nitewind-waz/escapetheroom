@@ -48,7 +48,7 @@ bool HasEmptyDoor(ruangan room);
 int FindEmptyDoor(ruangan room);
 void BuildRandomRoom(ruangan *root);
 void printRoom(ruangan roomm);
-void MasukPintu(ruangan rooms, bagStack *inventory, Player *player);
+void MasukPintu(ruangan rooms, bagList *inventory, Player *player);
 void FindAvailableRoom(ruangan current, ruangan* list, int* count);
 int getKey(ruangan room);
 void createEmpty(StackRoom* s);
