@@ -382,7 +382,7 @@ void game(ruangan rooms, bagList *inventory, Player *player){
             else{
                 system("cls");
                 printRoom(Room_Saat_ini);
-                printf("pintu tidak valid");
+                printf("input tidak valid");
             }
 
             // kunci ruangan setiap 10 langkah
