@@ -230,7 +230,7 @@ void printRoom(ruangan roomm){
     }
 }
 
-void MasukPintu(ruangan rooms, bagStack *inventory, Player *player){
+void MasukPintu(ruangan rooms, bagList *inventory, Player *player){
     ruangan Room_Saat_ini = rooms , RoomRoot = rooms; 
     
     StackRoom historyroom;
@@ -377,6 +377,7 @@ void MasukPintu(ruangan rooms, bagStack *inventory, Player *player){
                 // Fitur baru: Gunakan kunci untuk membuka ruangan
                 if (!isLockedQueueEmpty(&lockedRooms)) {
                     char unlockedRoom = dequeueLockedRoom(&lockedRooms);
+                    deleteBag(inventory, roomKey);
                     printf("\nAnda menggunakan kunci untuk membuka ruangan %c!\n", unlockedRoom);
                 } else {
                     printf("\nTidak ada ruangan yang terkunci saat ini.\n");
