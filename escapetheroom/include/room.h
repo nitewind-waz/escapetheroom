@@ -45,7 +45,6 @@ bool cariRuangan(ruangan awal, bool sudahDikunjungi[], char idroom);
 ruangan findRoomById(ruangan root, char targetId);
 void temukanExit(ruangan posisiSekarang, ruangan rootnya);
 void FindAllRooms(ruangan current, ruangan* list, int* count);
-void TemukanKunciExit(ruangan current);
-void resetVisitedAll(ruangan root);
+void resetVisitedAll(ruangan current);
 
 #endif

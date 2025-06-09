@@ -4,7 +4,6 @@
 #include "include/lockedroom.h"
 #include "include/stack.h"
 
-extern bool visited[MAX_ROOMS];
 
 int main(){
     srand(time(NULL));
@@ -21,7 +20,7 @@ int main(){
     BuildRandomRoom(&root);
     while (menu )
     {
-        system("cls");
+        // system("cls");
         printf("cara main :\n");
         printf("1. tekan \' A \' untuk ke pintu sebelah kiri \n");
         printf("2. tekan \' S \' untuk ke pintu yang ada di bawah \n");
@@ -42,8 +41,7 @@ int main(){
             return 0;
         }
     }
-    resetVisitedAll(root);
-    TemukanKunciExit(root);
+    
     printRoom(root);
     MasukPintu(root, &inventory, &player);
     return 0;

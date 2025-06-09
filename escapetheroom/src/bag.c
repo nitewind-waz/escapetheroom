@@ -67,3 +67,15 @@ void setInventory(bagList *list){
         insertInventory(list, roomKey);
     }
 }
+
+bool pHasDoor(bagList *list) {
+    Item item = roomKey;
+    Bag *current = list->head;
+    while (current != NULL) {
+        if (current->items == item) {
+            return true;
+        }
+        current = current->next;
+    }
+    return false;
+}
