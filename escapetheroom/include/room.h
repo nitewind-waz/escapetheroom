@@ -29,15 +29,6 @@ typedef struct Player {
     bool hasDoor;
 } Player;
 
-typedef struct riwayat {
-    ruangan Rooms;
-    struct riwayat *next;
-} riwayat;
-
-typedef struct {
-    riwayat *top;
-} StackRoom;
-
 // extern ruangan allRooms[MAX_ROOMS];
 ruangan FindExitRoom(ruangan current); 
 bool HasExitKey(ruangan room);
@@ -51,13 +42,9 @@ void printRoom(ruangan roomm);
 void MasukPintu(ruangan rooms, bagStack *inventory, Player *player);
 void FindAvailableRoom(ruangan current, ruangan* list, int* count);
 int getKey(ruangan room);
-void createEmpty(StackRoom* s);
-void PushHistory(StackRoom* s, ruangan Room);
-ruangan Pop(StackRoom* s);
-bool IsEmpty (StackRoom* S);
-void PrintHistory(StackRoom s);
 
 bool cariRuangan(ruangan awal, bool sudahDikunjungi[], char idroom);
+ruangan findRoomById(ruangan root, char targetId);
 void temukanExit(ruangan posisiSekarang, ruangan rootnya);
 void FindAllRooms(ruangan current, ruangan* list, int* count);
 void ResetVisited(ruangan current);

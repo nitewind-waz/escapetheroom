@@ -1,5 +1,6 @@
 #include "../include/room.h"
 #include "../include/lockedroom.h"
+#include "../include/stack.h"
 
 
 extern bool visited[MAX_ROOMS];
@@ -238,8 +239,10 @@ void MasukPintu(ruangan rooms, bagStack *inventory, Player *player){
     // Inisialisasi antrian ruangan terkunci dan penghitung langkah
     LockedQueue lockedRooms;
     initLockedQueue(&lockedRooms);
+    
     int stepCount = 0;
-
+    int lastLockedStep = 0;
+    
     char input;
     do
     {
@@ -365,6 +368,11 @@ void MasukPintu(ruangan rooms, bagStack *inventory, Player *player){
                 printf("\n--- Inventory ---\n");
                 printBag(inventory);
             }
+            else if (input == 'Q' || input == 'q')
+            {
+                printLockedQueue(lockedRooms);
+            }
+            
             else if (input == 'K' || input == 'k') {
                 // Fitur baru: Gunakan kunci untuk membuka ruangan
                 if (!isLockedQueueEmpty(&lockedRooms)) {
@@ -380,21 +388,10 @@ void MasukPintu(ruangan rooms, bagStack *inventory, Player *player){
                 printf("pintu tidak valid");
             }
 
-            // kunci ruangan setiap 20 langkah
-            if (stepCount % 20 == 0) {
-                ruangan allRooms[100];
-                int allRoomCount = 0;
-                resetVisitedAll(Room_Saat_ini);
-                FindAllRooms(Room_Saat_ini, allRooms, &allRoomCount);
-                
-                if (allRoomCount > 0) {
-                    ruangan roomToLock = allRooms[rand() % allRoomCount];
-                    // Pastikan ruangan exit tidak dikunci
-                    if (!HasExitRoom(roomToLock)) {
-                        enqueueLockedRoom(&lockedRooms, roomToLock->id);
-                        printf("\nPERINGATAN: Ruangan %c terkunci otomatis!\n", roomToLock->id);
-                    }
-                }
+            // kunci ruangan setiap 10 langkah
+            if (stepCount % 10 == 0 && stepCount != 0 && stepCount != lastLockedStep) {
+                LockRandomRoom(Room_Saat_ini, &lockedRooms,RoomRoot);
+                lastLockedStep = stepCount;
             }
             
             printf("\nJumlah Langkah : %d \n",stepCount);
@@ -406,51 +403,13 @@ void MasukPintu(ruangan rooms, bagStack *inventory, Player *player){
     } while (1);
 }
 
-void createEmpty(StackRoom *s){
-    s->top = NULL;
-}
-
-void PushHistory(StackRoom* s, ruangan Room){
-    riwayat *newRiwayatRoom = (riwayat*)malloc(sizeof(riwayat));
-    if (newRiwayatRoom != NULL)
-    {
-        newRiwayatRoom->Rooms = Room;
-        newRiwayatRoom->next = s->top;
-        s->top = newRiwayatRoom;
-    }
-}
-
-bool IsEmpty (StackRoom* S)
-{
-	return (S->top == NULL);
-}
-
-ruangan Pop(StackRoom* s) {
-    if (IsEmpty(s)) return NULL;
-
-    riwayat* temp = s->top;
-    ruangan room = temp->Rooms;
-    s->top = temp->next;
-    free(temp);
-    return room;
-}
-
-void PrintHistory(StackRoom s) {
-    riwayat* temp = s.top;
-
-    while (temp != NULL) {
-        printf("-> %c\n", temp->Rooms->id);
-        temp = temp->next;
-    }
-}
 
 // ==================================== MENCARI JALUR DARI POSISI SKRG KE PINTU EXIT  =============================================
 char jalur[MAX_ROOMS], jalur_Ke_PosisiSKrg[MAX_ROOMS], jalur_ke_Exit[MAX_ROOMS];
 int panjangJalur;
 
-// Fungsi pencarian exit - SANGAT SEDERHANA!
+// Fungsi pencarian
 bool cariRuangan(ruangan awal, bool sudahDikunjungi[], char idroom) {
-    // Jika ini adalah exit, selesai!
     if (awal->id == idroom) {
         jalur[panjangJalur++] = awal->id;
         return true;
@@ -464,7 +423,7 @@ bool cariRuangan(ruangan awal, bool sudahDikunjungi[], char idroom) {
     for (int i = 0; i < MAX_DOORS; i++) {
         if (awal->doors[i] != NULL && !sudahDikunjungi[awal->doors[i]->id]) {
             if (cariRuangan(awal->doors[i], sudahDikunjungi, idroom)) {
-                return true; // Ketemu exit!
+                return true;
             }
         }
     }
@@ -472,6 +431,29 @@ bool cariRuangan(ruangan awal, bool sudahDikunjungi[], char idroom) {
     // Backtrack
     panjangJalur--;
     return false;
+}
+
+ruangan findRoomById(ruangan root, char targetId){
+    if (root == NULL)
+        return NULL;
+
+    if (root->visited)
+        return NULL;
+
+    root->visited = true;
+
+    if (root->id == targetId)
+        return root;
+
+    for (int i = 0; i < MAX_DOORS; i++) {
+        if (root->doors[i] != NULL) {
+            ruangan hasil = findRoomById(root->doors[i], targetId);
+            if (hasil != NULL)
+                return hasil;
+        }
+    }
+
+    return NULL;
 }
 
 // Fungsi utama - diperbaiki untuk menampilkan jalur yang benar
@@ -583,7 +565,15 @@ void TemukanKunciExit(ruangan current) {
     }
 }
 
-
 void resetVisitedAll(ruangan root) {
-    for (int i = 0; i < MAX_ROOMS; i++) visited[i] = false;
+    if (root == NULL || root->visited == false)
+        return;
+
+    root->visited = false;
+
+    for (int i = 0; i < MAX_DOORS; i++) {
+        if (root->doors[i] != NULL) {
+            ResetVisited(root->doors[i]);
+        }
+    }
 }

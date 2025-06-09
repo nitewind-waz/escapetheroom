@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+
 // Inisialisasi antrian kosong
 void initLockedQueue(LockedQueue *queue) {
     queue->front = NULL;
@@ -80,4 +81,84 @@ void clearLockedQueue(LockedQueue *queue) {
     while (!isLockedQueueEmpty(queue)) {
         dequeueLockedRoom(queue);
     }
+}
+
+// Fungsi untuk mengumpulkan kandidat ruangan
+void FindCandidateRooms(ruangan currentRoom, ruangan* candidateList, int* candidateCount, LockedQueue* lockedQueue, ruangan root) {
+    *candidateCount = 0;
+    
+    // Kandidat awal: Node di bawah posisi saat ini (doors[0-2])
+    for (int i = 0; i < 3; i++) {
+        if (currentRoom->doors[i] != NULL) {
+            candidateList[(*candidateCount)++] = currentRoom->doors[i];
+        }
+    }
+    
+    // Cek apakah ada node terkunci di kandidat awal
+    bool hasLockedInCandidates = false;
+    for (int i = 0; i < *candidateCount; i++) {
+        if (isRoomLocked(lockedQueue, candidateList[i]->id)) {
+            hasLockedInCandidates = true;
+            break;
+        }
+    }
+    
+    if (hasLockedInCandidates) {
+        // Reset kandidat
+        *candidateCount = 0;
+        
+        // Tambahkan node di bawah posisi saat ini yang TIDAK terkunci
+        for (int i = 0; i < 3; i++) {
+            if (currentRoom->doors[i] != NULL && !isRoomLocked(lockedQueue, currentRoom->doors[i]->id)) {
+                candidateList[(*candidateCount)++] = currentRoom->doors[i];
+            }
+        }
+        
+        // Tambahkan node di bawah setiap node terkunci
+        LockedRoom* lockedNode = lockedQueue->front;
+        while (lockedNode != NULL) {
+            ruangan lockedRoom = findRoomById(root,lockedNode->roomID);
+            if (lockedRoom != NULL) {
+                for (int i = 0; i < 3; i++) {
+                    if (lockedRoom->doors[i] != NULL) {
+                        candidateList[(*candidateCount)++] = lockedRoom->doors[i];
+                    }
+                }
+            }
+            lockedNode = lockedNode->next;
+        }
+    }
+}
+
+// Fungsi utama untuk mengunci ruangan
+void LockRandomRoom(ruangan currentRoom, LockedQueue* lockedQueue, ruangan root) {
+    ruangan candidateRooms[MAX_ROOMS];
+    int candidateCount = 0;
+    
+    FindCandidateRooms(currentRoom, candidateRooms, &candidateCount, lockedQueue, root);
+    
+    if (candidateCount > 0) {
+        ruangan roomToLock = candidateRooms[rand() % candidateCount];
+        
+        if (!HasExitRoom(roomToLock) && !isRoomLocked(lockedQueue, roomToLock->id)) {
+            enqueueLockedRoom(lockedQueue, roomToLock->id);
+            printf("PERINGATAN: Ruangan %c terkunci!\n", roomToLock->id);
+        }
+    }
+}
+
+// Mencetak semua ruangan yang terkunci dalam antrian
+void printLockedQueue(LockedQueue queue) {
+    if (queue.front == NULL) {
+        printf("Tidak ada ruangan yang terkunci.\n");
+        return;
+    }
+
+    printf("Daftar ruangan yang terkunci: ");
+    LockedRoom *current = queue.front;
+    while (current != NULL) {
+        printf("%c ", current->roomID);
+        current = current->next;
+    }
+    printf("\n");
 }

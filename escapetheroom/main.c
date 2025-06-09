@@ -1,7 +1,8 @@
 // Library luar
 #include "include/room.h"
 #include "include/bag.h"
-#include "include/lockedroom.h"  // Tambahkan ini untuk sistem ruangan terkunci
+#include "include/lockedroom.h"
+#include "include/stack.h"
 
 extern bool visited[MAX_ROOMS];
 
@@ -31,7 +32,8 @@ int main(){
         printf("4. tekan \' W \' untuk Pindah Ke ruangan sebelumnya yang di datengin \n");
         printf("5. tekan \' H \' untuk melihat list Riwayat ruangan yang di jelajahi sebelumnya \n");
         printf("6. tekan \' M \' untuk mencari jalur ke EXIT \n");
-        printf("7. tekan \' I \' untuk membuka inventory\n\n");
+        printf("7. tekan \' Q \' menampilkan ruangan yang terkunci \n");
+        printf("8. tekan \' I \' untuk membuka inventory\n\n");
         printf("Mulai Bermain ?[y/t] : ");
 
         if (getch() == 'y' || getch() == 'Y')

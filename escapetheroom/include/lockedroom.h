@@ -2,6 +2,7 @@
 #define LOCKEDROOM_H
 
 #include <stdbool.h>
+#include "room.h"
 
 // Struktur node untuk ruangan terkunci
 typedef struct LockedRoom {
@@ -22,5 +23,8 @@ char dequeueLockedRoom(LockedQueue *queue);
 bool isLockedQueueEmpty(LockedQueue *queue);
 bool isRoomLocked(LockedQueue *queue, char roomID);
 void clearLockedQueue(LockedQueue *queue);
+void FindCandidateRooms(ruangan currentRoom, ruangan* candidateList, int* candidateCount, LockedQueue* lockedQueue, ruangan root);
+void LockRandomRoom(ruangan currentRoom, LockedQueue* lockedQueue, ruangan root);
+void printLockedQueue(LockedQueue queue);
 
 #endif
